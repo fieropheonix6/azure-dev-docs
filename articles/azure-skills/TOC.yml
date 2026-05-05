@@ -10,7 +10,7 @@
 - name: Skills reference
   items:
   - name: AI Runway AKS Setup
-    href: skills/airunway-aks-setup.md
+    href: skills/ai-runway-aks-setup.md
   - name: App Insights Instrumentation
     href: skills/app-insights-instrumentation.md
   - name: Azure AI Gateway
