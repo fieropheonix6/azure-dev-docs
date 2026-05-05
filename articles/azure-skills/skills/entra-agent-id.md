@@ -2,7 +2,7 @@
 title: Azure skill for Entra Agent ID
 description: Provisions Microsoft Entra Agent Identity Blueprints, BlueprintPrincipals, and per-instance Agent Identities via Microsoft Graph, and configures OAuth 2.0 token exchange.
 ms.topic: reference
-ms.date: 06/10/2026
+ms.date: 05/05/2026
 author: diberry
 ms.author: diberry
 ms.service: azure-mcp-server
