@@ -22,7 +22,7 @@ Provisions Microsoft Entra Agent Identity Blueprints, BlueprintPrincipals, and p
 
 This skill provides GitHub Copilot with specialized knowledge for creating and managing OAuth 2.0-capable identities for AI agents using Microsoft Graph. Every agent instance gets a distinct identity, audit trail, and independently scoped permission grants. The skill covers the Agent Identity object model (Blueprint → BlueprintPrincipal → Agent Identity), runtime token exchange flows, and the Microsoft Entra SDK for AgentID sidecar.
 
-For the latest Agent ID documentation, use the [microsoft-docs skill](https://github.com/microsoft/skills/blob/main/.github/skills/microsoft-docs/SKILL.md) which queries the [Microsoft Learn MCP Server](https://learn.microsoft.com/api/mcp) for current API parameters and behavior.
+For the latest Agent ID documentation, use the [microsoft-docs skill](https://github.com/microsoft/skills/blob/main/.github/skills/microsoft-docs/SKILL.md) which queries the Microsoft Learn MCP Server (`learn.microsoft.com/api/mcp`) for current API parameters and behavior.
 
 ## Prerequisites
 
