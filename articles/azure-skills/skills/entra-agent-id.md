@@ -81,7 +81,7 @@ Key permissions include:
 | `Application.ReadWrite.All` | Blueprint CRUD (application objects) |
 | `AgentIdentityBlueprint.Create` | Create new Blueprints |
 | `AgentIdentityBlueprint.ReadWrite.All` | Manage Blueprint lifecycle |
-| `AgentIdentity.Create` | Create per-instance identities |
+| `AgentIdentity.Create.All` | Create per-instance identities |
 | `AgentIdentity.ReadWrite.All` | Manage Agent Identity lifecycle |
 
 ## Example prompts
