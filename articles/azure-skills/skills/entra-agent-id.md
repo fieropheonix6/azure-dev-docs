@@ -65,7 +65,7 @@ This skill uses the following Azure MCP tools:
 
 | Tool | Description |
 |------|-------------|
-| `mcp_azure_mcp_documentation` | Search Microsoft Learn for current Agent ID setup, Graph API shapes, and SDK configuration |
+| [`mcp_azure_mcp_documentation`](../../azure-mcp-server/tools/azure-mcp-tool.md) | Search Microsoft Learn for current Agent ID setup, Graph API shapes, and SDK configuration |
 
 ## Example prompts
 
