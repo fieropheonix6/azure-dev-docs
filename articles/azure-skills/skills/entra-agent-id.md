@@ -41,9 +41,9 @@ Use this skill when you need to:
 
 ### When not to use this skill
 
-- Standard Entra app registration — use `entra-app-registration`.
-- Azure RBAC — use `azure-rbac`.
-- Microsoft Foundry agent authoring — use `microsoft-foundry`.
+- Standard Entra app registration — use [entra-app-registration](entra-app-registration.md).
+- Azure RBAC — use [azure-rbac](azure-rbac.md).
+- Microsoft Foundry agent authoring — use [microsoft-foundry](microsoft-foundry.md).
 
 ## Suggested workflow
 
