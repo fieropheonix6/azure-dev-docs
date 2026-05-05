@@ -5,7 +5,7 @@ ms.topic: reference
 ms.date: 05/05/2026
 author: diberry
 ms.author: diberry
-ms.service: azure-mcp-server
+ms.service: entra-id
 ms.custom: skill-version-1.0.1
 ---
 
@@ -13,7 +13,7 @@ ms.custom: skill-version-1.0.1
 
 Provisions Microsoft Entra Agent Identity Blueprints, BlueprintPrincipals, and per-instance Agent Identities via Microsoft Graph, and configures OAuth 2.0 token exchange.
 
-**Skill:** `entra-agent-id` | [Source code](https://github.com/microsoft/azure-skills/blob/main/skills/entra-agent-id/SKILL.md)
+**Skill:** `entra-agent-id` | [Source code](https://github.com/microsoft/skills/blob/main/.github/skills/entra-agent-id/SKILL.md)
 
 ## What it provides
 
@@ -59,14 +59,6 @@ The skill follows a core provisioning workflow:
 > [!IMPORTANT]
 > `DefaultAzureCredential` is not supported for Agent Identity APIs. Azure CLI tokens carry `Directory.AccessAsUser.All`, which Agent Identity APIs reject with 403. Use a dedicated app registration with `client_credentials`, or `Connect-MgGraph` with explicit delegated scopes.
 
-## Model Context Protocol (MCP) tools
-
-This skill uses the following Azure MCP tools:
-
-| Tool | Description |
-|------|-------------|
-| [`mcp_azure_mcp_documentation`](../../azure-mcp-server/tools/azure-mcp-tool.md) | Search Microsoft Learn for current Agent ID setup, Graph API shapes, and SDK configuration |
-
 ## Example prompts
 
 Try these prompts to activate this skill:
@@ -83,7 +75,7 @@ Try these prompts to activate this skill:
 
 ## Related content
 
-- [Microsoft Entra Agent ID setup guide](/entra/agent-id/identity-platform/agent-id-setup-instructions)
+- [Microsoft Entra Agent ID AI-guided setup](/entra/agent-id/identity-platform/agent-id-ai-guided-setup)
 - [Microsoft Entra SDK for AgentID](/entra/msidweb/agent-id-sdk/overview)
 - [Azure Model Context Protocol (MCP) Server overview](/azure/developer/azure-mcp-server/overview)
-- [Skill source code](https://github.com/microsoft/azure-skills/blob/main/skills/entra-agent-id/SKILL.md)
+- [Skill source code](https://github.com/microsoft/skills/blob/main/.github/skills/entra-agent-id/SKILL.md)
