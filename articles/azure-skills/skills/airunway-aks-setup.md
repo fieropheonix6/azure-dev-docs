@@ -17,13 +17,13 @@ Walks through setting up AI Runway on an existing AKS cluster, from cluster veri
 
 ## What it provides
 
-This skill provides GitHub Copilot with specialized knowledge for end-to-end AI Runway onboarding on Azure Kubernetes Service (AKS). It covers cluster verification, controller installation, GPU assessment, inference provider setup, and first model deployment.
+This skill provides GitHub Copilot with specialized knowledge for end-to-end AI Runway onboarding on Azure Kubernetes Service (AKS). It covers cluster verification, controller installation, GPU assessment, inference provider setup, and first model deployment. This skill uses no external MCP tools — all cluster operations are performed directly via `kubectl` and `make`.
 
 ## Prerequisites
 
 - **Azure subscription**: [Create a free account](https://azure.microsoft.com/free/) if you don't have one.
 - **AI assistant with Azure Skills**: [GitHub Copilot for Azure](/azure/developer/github-copilot-azure/get-started), Visual Studio Code with [Azure MCP extension](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azure-mcp-server), Claude Code, or another [compatible MCP client](../install.md).
-- **An existing AKS cluster**: If you don't have a cluster, use the `azure-kubernetes` skill first to provision one with a GPU node pool.
+- **An existing AKS cluster**: If you don't have a cluster, use the `azure-kubernetes` skill first to provision one with a GPU node pool (unless CPU-only inference is acceptable).
 - **CLI tools**: `kubectl`, `make`, and `curl` installed locally.
 
 ## When to use this skill
@@ -33,9 +33,22 @@ Use this skill when you need to:
 - Set up AI Runway on an existing AKS cluster from scratch.
 - Install the AI Runway controller and Custom Resource Definitions (CRDs).
 - Assess GPU hardware compatibility for model deployment.
-- Choose and install an inference provider such as KAITO, Dynamo, or KubeRay.
+- Choose and install an [inference provider](#inference-providers) such as KAITO, Dynamo, or KubeRay.
 - Deploy your first AI model to AKS via AI Runway.
 - Resume a partially complete AI Runway setup from a specific step.
+
+> [!TIP]
+> To resume setup from a specific step, tell the skill `skip-to-step N` where N is the step number (1–6).
+
+## Inference providers
+
+An inference provider is the runtime component that serves your AI model on the cluster. This skill supports three providers:
+
+| Provider | Best for | Description |
+|----------|----------|-------------|
+| **KAITO** | Managed GPU inference | Kubernetes AI Toolchain Operator — automates model deployment with built-in GPU node provisioning |
+| **Dynamo** | High-throughput serving | NVIDIA's inference framework optimized for multi-GPU, multi-node deployments |
+| **KubeRay** | Ray-based workloads | Kubernetes operator for Ray clusters — ideal for distributed inference and training |
 
 ## Suggested workflow
 
@@ -68,4 +81,5 @@ Try these prompts to activate this skill:
 ## Related content
 
 - [Azure Model Context Protocol (MCP) Server overview](/azure/developer/azure-mcp-server/overview)
+- [Azure Diagnostics skill](/azure/developer/azure-skills/skills/azure-diagnostics) — troubleshooting AI Runway deployments
 - [Skill source code](https://github.com/microsoft/azure-skills/blob/main/skills/airunway-aks-setup/SKILL.md)
