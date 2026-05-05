@@ -5,7 +5,7 @@ ms.topic: reference
 ms.date: 05/05/2026
 author: diberry
 ms.author: diberry
-ms.service: entra-id
+ms.service: azure-mcp-server
 ms.custom: skill-version-1.0.1
 ---
 
