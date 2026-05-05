@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Doc Review — Quickstart: Import data into Azure Cosmos DB using GitHub Copilot for Azure agent mode</title>
+<style>* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  color-scheme: light;
+  --color-success: #1a7f37;
+  --color-warning: #bf8700;
+  --color-danger: #cf222e;
+  --color-fg-default: #1f2328;
+  --color-fg-muted: #656d76;
+  --color-success-bg: #dafbe1;
+  --color-warning-bg: #fff8c5;
+  --color-danger-bg: #ffebe9;
+}
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #ffffff; color: #1f2328; line-height: 1.6;
+  max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem;
+}
+a { color: #0969da; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: 'SFMono-Regular', Consolas, monospace; font-size: 0.85em; background: #f6f8fa; padding: 0.15em 0.35em; border-radius: 4px; }
+h1 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.25rem; color: #1f2328; }
+h2 { font-size: 1.15rem; font-weight: 600; margin: 2rem 0 0.75rem; color: #1f2328;
+  border-bottom: 1px solid #d1d9e0; padding-bottom: 0.4rem; }
+h3 { font-size: 1rem; font-weight: 600; margin: 1.25rem 0 0.5rem; color: #1f2328; }
+.subtitle { color: #656d76; font-size: 0.85rem; margin-bottom: 1.5rem; }
+.url { color: #656d76; font-size: 0.85rem; word-break: break-all; }
+
+/* Summary section */
+.summary-section {
+  margin: 1.5rem 0; padding: 0;
+}
+.summary-intro {
+  font-size: 0.88rem; line-height: 1.65; color: #656d76; margin-bottom: 1rem;
+}
+.summary-findings {
+  font-size: 0.92rem; line-height: 1.65; color: #1f2328;
+}
+.summary-findings p { margin-bottom: 0.65rem; }
+.summary-verdict {
+  display: inline-block; font-weight: 700; padding: 0.15rem 0.55rem;
+  border-radius: 6px; font-size: 0.85rem; margin-right: 0.25rem;
+}
+.verdict-pass { background: #dafbe1; color: #1a7f37; }
+.verdict-needs-work { background: #fff8c5; color: #9a6700; }
+.verdict-fail { background: #ffebe9; color: #cf222e; }
+
+/* Top issues & recommendations */
+.top-issues-section {
+  background: #f6f8fa; border: 1px solid #d1d9e0; border-radius: 10px;
+  padding: 1.25rem 1.5rem; margin: 1.5rem 0;
+}
+.top-issues-title { font-size: 1.05rem; font-weight: 600; color: #1f2328; margin-bottom: 0.75rem; }
+.rec-item {
+  display: flex; align-items: flex-start; gap: 0.65rem;
+  padding: 0.5rem 0; border-bottom: 1px solid #e8ecf022;
+  font-size: 0.88rem; line-height: 1.5;
+}
+.rec-item:last-child { border-bottom: none; }
+.rec-num {
+  width: 22px; height: 22px; border-radius: 50%; background: #e8ecf0; color: #1f2328;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; font-weight: 700; flex-shrink: 0; margin-top: 1px;
+}
+.rec-item.critical .rec-num { background: #ffebe9; color: #cf222e; }
+.rec-item.medium .rec-num { background: #fff8c5; color: #9a6700; }
+.rec-item.minor .rec-num { background: #dafbe1; color: #1a7f37; }
+
+/* Score hero */
+.score-row { display: flex; gap: 1.5rem; margin: 1.5rem 0; flex-wrap: wrap; }
+.score-card {
+  flex: 1; min-width: 200px; background: #f6f8fa; border: 1px solid #d1d9e0;
+  border-radius: 10px; padding: 1.25rem; text-align: center;
+}
+.score-card .label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #656d76; }
+.score-card .value { font-size: 2.5rem; font-weight: 700; margin: 0.25rem 0; }
+.score-card .rating { font-size: 0.85rem; color: #656d76; }
+.score-card.change { background: #f6f8fa; }
+.score-card.change .value { font-size: 1.8rem; }
+
+/* Category bars */
+.cat-table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+.cat-table th { text-align: left; padding: 0.5rem 0.75rem; font-size: 0.75rem;
+  text-transform: uppercase; letter-spacing: 0.04em; color: #656d76;
+  border-bottom: 1px solid #d1d9e0; }
+.cat-table td { padding: 0.5rem 0.75rem; border-bottom: 1px solid #e8ecf0; font-size: 0.9rem; }
+.bar-cell { width: 120px; }
+.bar { height: 8px; border-radius: 4px; background: #e8ecf0; position: relative; }
+.bar-fill { height: 100%; border-radius: 4px; }
+
+/* Verification Steps */
+.verif-section {
+  margin: 1.5rem 0;
+}
+.verif-intro {
+  font-size: 0.88rem; line-height: 1.6; color: #656d76; margin-bottom: 1rem;
+}
+.verif-table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.88rem; }
+.verif-table th {
+  text-align: left; padding: 0.5rem 0.75rem; font-size: 0.72rem;
+  text-transform: uppercase; letter-spacing: 0.04em; color: #656d76;
+  border-bottom: 2px solid #d1d9e0; white-space: nowrap;
+}
+.verif-table td { padding: 0.5rem 0.75rem; border-bottom: 1px solid #e8ecf0; vertical-align: top; }
+.verif-table td:first-child { white-space: nowrap; font-weight: 500; }
+.verif-status {
+  display: inline-block; font-size: 0.7rem; font-weight: 600; padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+}
+.verif-status.present { background: #dafbe1; color: #1a7f37; }
+.verif-status.missing { background: #ffebe9; color: #cf222e; }
+.verif-status.partial { background: #fff8c5; color: #9a6700; }
+.verif-cmd {
+  font-family: 'SFMono-Regular', Consolas, monospace; font-size: 0.8rem;
+  color: #0550ae; background: #f6f8fa; padding: 0.2rem 0.5rem; border-radius: 4px;
+  display: inline-block; margin-top: 0.2rem; border: 1px solid #d1d9e0;
+}
+
+/* Metrics dashboard */
+.metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; margin: 1rem 0; }
+.metric-card {
+  background: #f6f8fa; border: 1px solid #d1d9e0; border-radius: 8px;
+  padding: 1rem; text-align: center;
+}
+.metric-value { font-size: 1.8rem; font-weight: 700; color: #1f2328; }
+.metric-label { font-size: 0.75rem; color: #656d76; margin-top: 0.1rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.metric-note { font-size: 0.72rem; color: #656d76; margin-top: 0.3rem; }
+
+/* Issue cards */
+.issue-list { list-style: none; margin: 0.5rem 0; }
+.issue-item {
+  background: #f6f8fa; border: 1px solid #d1d9e0; border-radius: 8px;
+  padding: 0.85rem 1rem; margin-bottom: 0.5rem; font-size: 0.9rem;
+  border-left: 4px solid #d1d9e0;
+}
+.issue-item.critical { border-left-color: #cf222e; }
+.issue-item.medium { border-left-color: #bf8700; }
+.issue-item.minor { border-left-color: #1a7f37; }
+.issue-item .badge, .issue-badge {
+  display: inline-block; font-size: 0.7rem; font-weight: 600; padding: 0.1rem 0.45rem;
+  border-radius: 4px; margin-right: 0.4rem; vertical-align: middle;
+}
+.badge.critical, .issue-badge.critical { background: #ffebe9; color: #cf222e; }
+.badge.medium, .issue-badge.medium { background: #fff8c5; color: #9a6700; }
+.badge.minor, .issue-badge.minor { background: #dafbe1; color: #1a7f37; }
+.issue-title { font-weight: 600; font-size: 0.9rem; }
+.issue-body { font-size: 0.85rem; color: #656d76; margin-top: 0.35rem; line-height: 1.5; }
+.issue-fix {
+  font-size: 0.82rem; color: #0550ae; margin-top: 0.35rem;
+  padding: 0.35rem 0.65rem; background: #ddf4ff;
+  border-radius: 4px; border-left: 3px solid #0969da; line-height: 1.5;
+}
+
+/* Step timeline */
+.step { display: flex; gap: 0.75rem; margin-bottom: 0.5rem; }
+.step-icon {
+  width: 28px; height: 28px; border-radius: 50%; display: flex;
+  align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0;
+  margin-top: 2px;
+}
+.step-icon.success { background: #dafbe1; color: #1a7f37; }
+.step-icon.failed { background: #ffebe9; color: #cf222e; }
+.step-icon.skipped { background: #ddf4ff; color: #0969da; }
+.step-icon.pending { background: #e8ecf0; color: #656d76; }
+.step-verif {
+  font-size: 0.75rem; margin-top: 0.2rem; display: inline-block;
+  padding: 0.1rem 0.4rem; border-radius: 4px;
+}
+.step-verif.verif-present { color: #1a7f37; background: #dafbe1; }
+.step-verif.verif-missing { color: #656d76; background: #e8ecf0; }
+.step-body { flex: 1; }
+.step-title { font-weight: 500; font-size: 0.9rem; }
+.step-detail { font-size: 0.8rem; color: #656d76; margin-top: 0.15rem; }
+.step-cmd { font-family: 'SFMono-Regular', Consolas, monospace; font-size: 0.8rem;
+  color: #0550ae; background: #f6f8fa; padding: 0.2rem 0.5rem; border-radius: 4px;
+  display: inline-block; margin-top: 0.25rem; max-width: 100%; overflow-x: auto;
+  border: 1px solid #d1d9e0; }
+.step-issue-tag {
+  font-size: 0.75rem; color: #9a6700; background: #fff8c5;
+  padding: 0.15rem 0.4rem; border-radius: 4px; margin-top: 0.25rem; display: inline-block;
+}
+
+/* Improvements list */
+.improv-list { list-style: none; margin: 0.5rem 0; counter-reset: improv; }
+.improv-item {
+  background: #f6f8fa; border: 1px solid #d1d9e0; border-radius: 8px;
+  padding: 0.6rem 0.85rem; margin-bottom: 0.4rem; font-size: 0.85rem;
+  counter-increment: improv;
+}
+.improv-item::before {
+  content: counter(improv); display: inline-flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px; border-radius: 50%; background: #ddf4ff; color: #0969da;
+  font-size: 0.7rem; font-weight: 600; margin-right: 0.5rem; vertical-align: middle;
+}
+
+footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #d1d9e0;
+  font-size: 0.75rem; color: #656d76; text-align: center; }
+
+/* Executive summary banner */
+.exec-summary {
+  display: flex; align-items: center; gap: 1rem;
+  padding: 1.25rem 1.5rem; border-radius: 10px; margin: 1.5rem 0;
+  font-size: 0.95rem; line-height: 1.5;
+}
+.exec-summary-icon { font-size: 1.5rem; flex-shrink: 0; }
+.exec-summary-text { flex: 1; }
+.exec-summary-green { background: #dafbe1; border: 1px solid #1a7f3744; }
+.exec-summary-amber { background: #fff8c5; border: 1px solid #bf870044; }
+.exec-summary-red { background: #ffebe9; border: 1px solid #cf222e44; }
+
+/* What went well */
+.went-well-item {
+  display: flex; gap: 0.75rem; background: #f6fef9; border: 1px solid #1a7f3722;
+  border-left: 4px solid #1a7f37; border-radius: 8px;
+  padding: 0.85rem 1rem; margin-bottom: 0.5rem; font-size: 0.9rem;
+}
+.went-well-icon {
+  width: 24px; height: 24px; border-radius: 50%; background: #dafbe1; color: #1a7f37;
+  display: flex; align-items: center; justify-content: center; font-size: 0.85rem;
+  font-weight: 600; flex-shrink: 0; margin-top: 2px;
+}
+.went-well-body { flex: 1; }
+
+/* What didn't go well */
+.went-wrong-item {
+  display: flex; gap: 0.75rem; background: #fffbf0; border: 1px solid #bf870022;
+  border-left: 4px solid #bf8700; border-radius: 8px;
+  padding: 0.85rem 1rem; margin-bottom: 0.5rem; font-size: 0.9rem;
+}
+.went-wrong-icon {
+  width: 24px; height: 24px; border-radius: 50%; background: #fff8c5; color: #9a6700;
+  display: flex; align-items: center; justify-content: center; font-size: 0.85rem;
+  font-weight: 600; flex-shrink: 0; margin-top: 2px;
+}
+.went-wrong-body { flex: 1; }
+
+/* Score card accent */
+.score-card-accent { border-top: 4px solid #d1d9e0; }
+
+/* Recommendation sub-headings */
+.rec-section-heading {
+  font-size: 1rem; font-weight: 600; margin: 1.25rem 0 0.5rem; color: #1f2328;
+  border: none; padding: 0;
+}
+
+/* Tool dashboard */
+.tool-dashboard { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem; }
+.tool-stat-card {
+  flex: 1 1 140px; background: #f6f8fa; border: 1px solid #d1d9e0; border-radius: 8px;
+  padding: 0.75rem 1rem; text-align: center; min-width: 120px;
+}
+.tool-stat-card .tool-stat-value { font-size: 1.5rem; font-weight: 700; color: #1f2328; }
+.tool-stat-card .tool-stat-label { font-size: 0.75rem; color: #656d76; margin-top: 0.15rem; }
+.tool-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 0.5rem; }
+.tool-table th { text-align: left; padding: 0.4rem 0.6rem; border-bottom: 2px solid #d1d9e0; color: #656d76; font-weight: 600; }
+.tool-table td { padding: 0.35rem 0.6rem; border-bottom: 1px solid #d1d9e033; }
+.tool-table .tool-count { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Skills dashboard */
+.skill-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.75rem 0; }
+.skill-chip {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  padding: 0.35rem 0.65rem; border-radius: 16px; font-size: 0.78rem; font-weight: 500;
+  border: 1px solid #d1d9e0;
+}
+.skill-chip.invoked { background: #ddf4ff; border-color: #0969da44; color: #0550ae; }
+.skill-chip.available { background: #f6f8fa; border-color: #d1d9e0; color: #656d76; }
+.skill-chip-dot { width: 6px; height: 6px; border-radius: 50%; }
+.skill-chip.invoked .skill-chip-dot { background: #0969da; }
+.skill-chip.available .skill-chip-dot { background: #d1d9e0; }
+
+/* Document title */
+.doc-title {
+  font-size: 1.35rem; font-weight: 700; color: #1f2328; margin: 0.35rem 0 0.15rem;
+  line-height: 1.3;
+}
+
+/* Collapsible sections */
+.gh-details { margin: 1rem 0; }
+.gh-details summary {
+  cursor: pointer; font-weight: 600; font-size: 1.1rem; color: #0969da;
+  padding: 0.6rem 0; list-style: none;
+}
+.gh-details summary::-webkit-details-marker { display: none; }
+.gh-details summary::before { content: '▶ '; font-size: 0.75rem; margin-right: 0.35rem; }
+.gh-details[open] summary::before { content: '▼ '; }
+.details-content { padding: 0.75rem 0; }
+
+/* Hero section — Top 3 Things to Fix */
+.hero-section {
+  background: #f6f8fa; border: 1px solid #d1d9e0; border-radius: 10px;
+  padding: 1.25rem 1.5rem; margin: 1.5rem 0;
+}
+.hero-title {
+  font-size: 1.1rem; font-weight: 600; color: #1f2328; margin-bottom: 1rem;
+}
+.hero-cards { display: flex; flex-direction: column; gap: 0.75rem; }
+.hero-card {
+  background: #ffffff; border: 1px solid #d1d9e0; border-radius: 8px;
+  padding: 1rem 1.25rem; border-left: 4px solid #d1d9e0;
+  display: flex; align-items: flex-start; gap: 0.85rem;
+}
+.hero-card.critical { border-left-color: #cf222e; background: #fffbfa; }
+.hero-card.medium { border-left-color: #bf8700; background: #fffdf5; }
+.hero-card.minor { border-left-color: #1a7f37; background: #f6fef9; }
+.hero-card-num {
+  width: 28px; height: 28px; border-radius: 50%; background: #e8ecf0; color: #1f2328;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem; font-weight: 700; flex-shrink: 0;
+}
+.hero-card.critical .hero-card-num { background: #ffebe9; color: #cf222e; }
+.hero-card.medium .hero-card-num { background: #fff8c5; color: #9a6700; }
+.hero-card.minor .hero-card-num { background: #dafbe1; color: #1a7f37; }
+.hero-card-body { flex: 1; min-width: 0; }
+.hero-card-top { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.hero-badge {
+  display: inline-block; font-size: 0.65rem; font-weight: 700; padding: 0.15rem 0.5rem;
+  border-radius: 10px; text-transform: uppercase; letter-spacing: 0.04em; flex-shrink: 0;
+}
+.hero-badge.critical { background: #ffebe9; color: #cf222e; }
+.hero-badge.medium { background: #fff8c5; color: #9a6700; }
+.hero-badge.minor { background: #dafbe1; color: #1a7f37; }
+.hero-card-title { font-weight: 600; font-size: 0.95rem; color: #1f2328; }
+.hero-card-desc {
+  font-size: 0.85rem; color: #656d76; margin-top: 0.35rem; line-height: 1.5;
+}
+
+/* Before / After comparison cards */
+.ba-cards { display: flex; flex-direction: column; gap: 1.25rem; }
+.ba-card {
+  display: grid; grid-template-columns: 1fr 1fr;
+  border: 1px solid #d1d9e0; border-radius: 8px; overflow: hidden;
+}
+.ba-card-header {
+  grid-column: 1 / -1; background: #f6f8fa; border-bottom: 1px solid #d1d9e0;
+  padding: 0.65rem 1rem; font-weight: 600; font-size: 0.9rem; color: #1f2328;
+}
+.ba-side {
+  padding: 0.85rem 1rem; font-size: 0.8rem; line-height: 1.65;
+  white-space: pre-wrap; word-break: break-word; overflow-wrap: break-word;
+}
+.ba-original { background: #fff5f5; border-right: 1px solid #d1d9e0; }
+.ba-improved { background: #f0fff4; }
+.ba-col-header {
+  font-weight: 700; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em;
+  margin-bottom: 0.5rem; padding-bottom: 0.35rem; border-bottom: 1px solid #d1d9e022;
+}
+.ba-original .ba-col-header { color: #cf222e; }
+.ba-improved .ba-col-header { color: #1a7f37; }
+.ba-content {
+  font-family: 'SFMono-Regular', Consolas, monospace; font-size: 0.78rem;
+  color: #1f2328; line-height: 1.6;
+}
+
+/* Execution log */
+.exec-log {
+  background: #f6f8fa; border: 1px solid #d1d9e0; border-radius: 8px;
+  padding: 1rem 1.25rem; margin: 0.75rem 0 0; overflow-x: auto;
+  font-size: 0.78rem; line-height: 1.7; color: #1f2328;
+  white-space: pre-wrap; word-break: break-word;
+}
+.exec-log code { background: none; padding: 0; font-size: inherit; color: inherit; }
+
+/* Working Well section */
+.working-well-section {
+  background: linear-gradient(135deg, #f0fff4 0%, #f6f8fa 100%);
+  border: 1px solid #1a7f3733; border-left: 3px solid #1a7f37;
+  border-radius: 10px; padding: 1.25rem 1.5rem; margin: 1.5rem 0;
+}
+
+/* Report intro banner */
+.report-intro {
+  display: flex; align-items: flex-start; gap: 0.85rem;
+  background: linear-gradient(135deg, #ddf4ff 0%, #f0f6ff 100%);
+  border: 1px solid #0969da33; border-left: 4px solid #0969da;
+  border-radius: 10px; padding: 1rem 1.25rem; margin: 1rem 0 1.5rem;
+  font-size: 0.85rem; line-height: 1.55; color: #1f2328;
+}
+.report-intro-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 0.1rem; }
+.report-intro-body { flex: 1; }
+.working-well-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+.working-well-header h2 { margin: 0; border: none; padding: 0; color: #1a7f37; font-size: 1.1rem; }
+.working-well-count {
+  background: #dafbe1; color: #1a7f37; font-size: 0.7rem; font-weight: 600;
+  padding: 0.15rem 0.5rem; border-radius: 10px;
+}
+.working-well { display: flex; flex-direction: column; gap: 0.4rem; }
+.working-well-item {
+  background: #ffffff; border: 1px solid #1a7f3722; border-left: 3px solid #1a7f37;
+  border-radius: 6px; padding: 0.6rem 0.85rem; font-size: 0.85rem; color: #1f2328;
+}
+
+/* Heatmap */
+.heatmap-section { display: flex; flex-direction: column; gap: 0.6rem; }
+.heatmap-bar {
+  display: flex; align-items: center; gap: 0.75rem;
+}
+.heatmap-label { font-size: 0.85rem; font-weight: 500; min-width: 200px; }
+.heatmap-track {
+  flex: 1; height: 10px; background: #e8ecf0; border-radius: 5px; overflow: hidden;
+}
+.heatmap-fill { height: 100%; border-radius: 5px; transition: width 0.3s; }
+.heatmap-value {
+  font-size: 0.8rem; font-weight: 600; min-width: 30px; text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.heatmap-tier {
+  font-size: 0.7rem; font-weight: 600; padding: 0.1rem 0.4rem; border-radius: 4px;
+  min-width: 75px; text-align: center;
+}
+.tier-smooth { background: #dafbe1; color: #1a7f37; }
+.tier-friction { background: #fff8c5; color: #9a6700; }
+.tier-hard { background: #ffebe9; color: #cf222e; }
+.heatmap-legend {
+  display: flex; align-items: center; gap: 1rem; margin-top: 0.75rem;
+  font-size: 0.75rem; color: var(--color-fg-muted, #656d76);
+}
+.heatmap-legend-item { display: flex; align-items: center; gap: 0.3rem; }
+.heatmap-legend-swatch {
+  width: 12px; height: 12px; border-radius: 3px; display: inline-block;
+}
+
+/* Challenge timeline */
+.challenge-tl { display: flex; flex-direction: column; gap: 0.75rem; }
+.challenge-tl-item {
+  display: flex; align-items: flex-start; gap: 0.75rem;
+  padding: 0.5rem 0; border-bottom: 1px solid #e8ecf022;
+}
+.challenge-tl-marker {
+  width: 28px; height: 28px; border-radius: 50%; display: flex;
+  align-items: center; justify-content: center; font-size: 0.85rem;
+  font-weight: 600; flex-shrink: 0; margin-top: 2px;
+}
+.challenge-tl-marker.success { background: #dafbe1; color: #1a7f37; }
+.challenge-tl-marker.issue { background: #ffebe9; color: #cf222e; }
+.challenge-tl-marker.workaround { background: #fff8c5; color: #9a6700; }
+.challenge-tl-marker.skipped { background: #ddf4ff; color: #0969da; }
+.challenge-tl-body { flex: 1; min-width: 0; }
+.challenge-tl-step { font-weight: 500; font-size: 0.9rem; }
+
+/* Blocked status banner */
+.blocked-banner {
+  background: #ffebe9; border: 2px solid #cf222e; border-radius: 10px;
+  padding: 1.5rem; margin: 1.5rem 0; text-align: center;
+}
+.blocked-banner-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.blocked-banner-status {
+  font-size: 1.5rem; font-weight: 700; color: #cf222e; margin-bottom: 0.35rem;
+}
+.blocked-banner-subtitle { font-size: 0.9rem; color: #656d76; }
+
+/* Learn more banner */
+.learn-more-banner {
+  background: #ddf4ff; border: 1px solid #0969da; border-radius: 10px;
+  padding: 1rem 1.25rem; margin: 1.5rem 0;
+  display: flex; align-items: center; gap: 0.75rem;
+}
+.learn-more-banner-icon { font-size: 1.5rem; flex-shrink: 0; }
+.learn-more-banner-body { flex: 1; font-size: 0.88rem; color: #1f2328; }
+
+/* Progress bar */
+.progress-section { margin: 1.5rem 0; }
+.progress-label {
+  font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem; color: #1f2328;
+}
+.progress-bar-container {
+  display: flex; align-items: center; gap: 0.75rem;
+}
+.progress-bar-text { font-size: 0.85rem; color: #656d76; min-width: 180px; }
+
+/* Category summary pills */
+.category-pills {
+  display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0;
+}
+.category-pill {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  padding: 0.4rem 0.75rem; border-radius: 16px;
+  font-size: 0.82rem; font-weight: 600; border: 1px solid;
+}
+.category-pill.critical {
+  background: #ffebe9; border-color: #cf222e; color: #cf222e;
+}
+.category-pill.medium {
+  background: #fff8c5; border-color: #bf8700; color: #9a6700;
+}
+.category-pill-count {
+  background: #ffffff; border-radius: 50%; width: 20px; height: 20px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem; font-weight: 700;
+}
+
+/* Blocker subsections */
+.blocker-subsection {
+  margin-top: 0.75rem; padding-top: 0.5rem;
+  border-top: 1px solid #e8ecf0;
+}
+.blocker-subsection-title {
+  font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.04em; color: #656d76; margin-bottom: 0.35rem;
+}
+.blocker-quote {
+  font-style: italic; color: #656d76; background: #f6f8fa;
+  padding: 0.5rem 0.75rem; border-left: 3px solid #d1d9e0;
+  border-radius: 4px; margin: 0.35rem 0;
+}
+.blocker-alt-badge {
+  display: inline-block; font-size: 0.65rem; font-weight: 700;
+  padding: 0.15rem 0.5rem; border-radius: 10px;
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.blocker-alt-badge.quick-win { background: #dafbe1; color: #1a7f37; }
+.blocker-alt-badge.product-gap { background: #fff8c5; color: #9a6700; }
+
+/* Tool resolution cards — used in "Tool Alternatives Used" section */
+.tool-resolution {
+  display: inline-block; font-size: 0.65rem; font-weight: 700;
+  padding: 0.15rem 0.5rem; border-radius: 10px;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  background: #dafbe1; color: #1a7f37;
+}
+.tool-resolution.failed { background: #ffebe9; color: #cf222e; }
+.tool-alt-card {
+  border: 1px solid #d1d9e0; border-radius: 8px; padding: 1rem;
+  margin: 0.5rem 0; background: #f6f8fa;
+}
+.tool-alt-card .tool-alt-step { font-weight: 600; color: var(--color-fg-default); }
+.tool-alt-card .tool-alt-doc { color: var(--color-fg-muted); font-size: 0.85rem; margin: 0.25rem 0; }
+.tool-alt-card .tool-alt-tool { font-family: monospace; font-size: 0.82rem; color: #0550ae; }
+.tool-alt-card .tool-alt-result { font-size: 0.85rem; margin-top: 0.35rem; }
+
+/* Status table */
+.status-table {
+  width: 100%; border-collapse: collapse; margin: 1rem 0;
+  font-size: 0.88rem;
+}
+.status-table th {
+  text-align: left; padding: 0.5rem 0.75rem; font-size: 0.72rem;
+  text-transform: uppercase; letter-spacing: 0.04em; color: #656d76;
+  border-bottom: 2px solid #d1d9e0; font-weight: 600;
+}
+.status-table td {
+  padding: 0.5rem 0.75rem; border-bottom: 1px solid #e8ecf0;
+}
+.status-table td:first-child { font-weight: 600; color: #656d76; }
+/* Improved Documentation Section */
+.improved-doc {
+  max-height: 80vh; overflow-y: auto; padding: 1rem 1.25rem;
+  border: 1px solid #d1d9e0; border-radius: 8px; background: #fff;
+  font-size: 0.92rem; line-height: 1.65; color: var(--color-fg-default);
+}
+.improved-doc h1, .improved-doc h2, .improved-doc h3,
+.improved-doc h4, .improved-doc h5, .improved-doc h6 {
+  margin-top: 1.5em; margin-bottom: 0.5em; color: var(--color-fg-default);
+  border-bottom: 1px solid #e8ecf0; padding-bottom: 0.3em;
+}
+.improved-doc h1 { font-size: 1.5rem; }
+.improved-doc h2 { font-size: 1.3rem; }
+.improved-doc h3 { font-size: 1.1rem; }
+.improved-doc h4, .improved-doc h5, .improved-doc h6 { font-size: 1rem; border-bottom: none; }
+.improved-doc p { margin: 0.75em 0; }
+.improved-doc ul, .improved-doc ol { margin: 0.75em 0; padding-left: 1.5em; }
+.improved-doc li { margin: 0.25em 0; }
+.improved-doc a { color: #0969da; text-decoration: none; }
+.improved-doc a:hover { text-decoration: underline; }
+.improved-doc pre {
+  background: #f6f8fa; border: 1px solid #d1d9e0; border-radius: 6px;
+  padding: 0.85rem 1rem; overflow-x: auto; font-size: 0.85rem;
+  line-height: 1.5; margin: 0.75em 0;
+}
+.improved-doc code {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 0.88em;
+}
+.improved-doc :not(pre) > code {
+  background: #eff1f3; padding: 0.15em 0.35em; border-radius: 4px;
+}
+.improved-doc table {
+  border-collapse: collapse; width: 100%; margin: 0.75em 0;
+  font-size: 0.88rem;
+}
+.improved-doc th, .improved-doc td {
+  border: 1px solid #d1d9e0; padding: 0.5rem 0.75rem; text-align: left;
+}
+.improved-doc th {
+  background: #f6f8fa; font-weight: 600; color: var(--color-fg-default);
+}
+.improved-doc blockquote {
+  border-left: 3px solid #d1d9e0; padding: 0.25em 1em; margin: 0.75em 0;
+  color: var(--color-fg-muted);
+}
+.improved-doc hr { border: none; border-top: 1px solid #d1d9e0; margin: 1.5em 0; }
+.improved-doc img { max-width: 100%; height: auto; }
+/* Responsive */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.75rem; }
+  .score-card .value { font-size: 2rem; }
+  .score-card.change .value { font-size: 1.4rem; }
+  .ba-grid { grid-template-columns: 1fr; }
+  .ba-original { border-right: none; border-bottom: 1px solid #d1d9e0; }
+  .hero-card { flex-direction: column; }
+  .hero-card-num { width: 22px; height: 22px; font-size: 0.75rem; }
+  .heatmap-label { min-width: 100px; font-size: 0.72rem; }
+  .cat-table, .verif-table, .tool-table { display: block; overflow-x: auto; }
+  .metrics-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<h1>Documentation Review Report</h1>
+<div class="doc-title">Quickstart: Import data into Azure Cosmos DB using GitHub Copilot for Azure agent mode</div>
+<div class="url"><a href="C:\Users\diberry\project-dina\repos\public-microsoftdocs-azure-dev-docs-pr\articles\github-copilot-azure\agent-mode-cosmosdb-import.md" target="_blank">C:\Users\diberry\project-dina\repos\public-microsoftdocs-azure-dev-docs-pr\articles\github-copilot-azure\agent-mode-cosmosdb-import.md</a></div>
+<div class="subtitle">Generated 2026-05-04 15:45 by doc-agent</div>
+
+<h2>Summary</h2>
+<div class="summary-section">
+  <div class="summary-intro"><strong>Agent-Friendliness Evaluation</strong> — This report evaluates documentation from the perspective of an <strong>autonomous AI coding agent</strong> attempting to follow every step without human intervention. Scores reflect how well the documentation supports fully automated execution: Are commands copy-paste ready? Are prerequisites explicit? Can each step be verified programmatically? Issues flagged here are the barriers that prevent AI agents from successfully completing the documented workflow end-to-end.</div>
+  <div class="summary-findings"><p><span class="summary-verdict verdict-needs-work">⚠️ FAIR</span>This documentation scored <strong>63 out of 100</strong> (Needs Improvement). The review identified 9 issues. 0 verification steps missing (2 partial).</p><p>After applying automated improvements, the score rose to <strong>89 out of 100</strong> (Good), a change of +26 points.</p></div>
+  <div class="score-row">
+    <div class="score-card"><div class="label">Original Score</div><div class="value" style="color:#bc4c00">63%</div><div class="rating">Needs Improvement</div></div>
+    <div class="score-card"><div class="label">Improved Score</div><div class="value" style="color:#9a6700">89%</div><div class="rating">Good</div></div>
+    <div class="score-card change"><div class="label">Change</div><div class="value" style="color:#1a7f37">+26</div><div class="rating">points</div></div>
+  </div>
+</div>
+
+<div class="hero-section"><div class="hero-title">🎯 Top Issues to Fix</div><p style="font-size:0.82rem;color:var(--color-fg-muted);margin-bottom:1rem">9 issues found — 5 medium, 4 minor.</p><div class="hero-cards"><div class="hero-card medium"><div class="hero-card-num">1</div><div class="hero-card-body"><div class="hero-card-top"><span class="hero-badge medium">Medium</span></div><div class="hero-card-title">No verification commands between resource creation steps</div><div class="issue-fix"><strong>Fix:</strong> : Add <code>az cosmosdb show</code>, <code>az group show</code>, and <code>az cosmosdb sql container show</code> verification commands after each creation step with expected output.</div></div></div><div class="hero-card medium"><div class="hero-card-num">2</div><div class="hero-card-body"><div class="hero-card-top"><span class="hero-badge medium">Medium</span></div><div class="hero-card-title">Download instruction is unnecessarily complex</div><div class="issue-fix"><strong>Fix:</strong> : Provide a direct terminal download command as the primary method: <code>curl -o products.json &quot;https://raw.githubusercontent.com/AzureCosmosDB/CosmicWorks/main/data/database-v4/product&quot;</code></div></div></div><div class="hero-card medium"><div class="hero-card-num">3</div><div class="hero-card-body"><div class="hero-card-top"><span class="hero-badge medium">Medium</span></div><div class="hero-card-title">Verification step suggests CLI query that might not work</div><div class="issue-fix"><strong>Fix:</strong> : Suggest generating a Python verification script instead, or document that the <code>cosmosdb-preview</code> extension is needed.</div></div></div></div></div>
+
+<details class="gh-details">
+<summary>All Issues by Severity · 9 issues found across the review — 0 critical, 5 medium, 4 minor</summary>
+<div class="details-content">
+<ul class="issue-list"><li class="issue-item medium"><div><span class="issue-badge medium">Medium</span><span class="issue-title">No verification commands between resource creation steps</span></div><div class="issue-fix"><strong>Fix:</strong> : Add <code>az cosmosdb show</code>, <code>az group show</code>, and <code>az cosmosdb sql container show</code> verification commands after each creation step with expected output.</div></li><li class="issue-item medium"><div><span class="issue-badge medium">Medium</span><span class="issue-title">Download instruction is unnecessarily complex</span></div><div class="issue-fix"><strong>Fix:</strong> : Provide a direct terminal download command as the primary method: <code>curl -o products.json &quot;https://raw.githubusercontent.com/AzureCosmosDB/CosmicWorks/main/data/database-v4/product&quot;</code></div></li><li class="issue-item medium"><div><span class="issue-badge medium">Medium</span><span class="issue-title">Verification step suggests CLI query that might not work</span></div><div class="issue-fix"><strong>Fix:</strong> : Suggest generating a Python verification script instead, or document that the <code>cosmosdb-preview</code> extension is needed.</div></li><li class="issue-item medium"><div><span class="issue-badge medium">Medium</span><span class="issue-title">No expected output shown for any agent mode interaction</span></div><div class="issue-fix"><strong>Fix:</strong> : Add sample output snippets or success indicators after each prompt (for example, &quot;Agent mode runs the command and you see <code>provisioningState: Succeeded</code>&quot;).</div></li><li class="issue-item medium"><div><span class="issue-badge medium">Medium</span><span class="issue-title">No time estimate for Cosmos DB account creation</span></div><div class="issue-fix"><strong>Fix:</strong> : Add a note: &quot;This step takes 3–5 minutes to complete.&quot;</div></li><li class="issue-item minor"><div><span class="issue-badge minor">Minor</span><span class="issue-title">Missing RBAC permissions in prerequisites</span></div><div class="issue-fix"><strong>Fix:</strong> : Add &quot;Contributor role or higher on the subscription&quot; to prerequisites.</div></li><li class="issue-item minor"><div><span class="issue-badge minor">Minor</span><span class="issue-title">No cost warning</span></div><div class="issue-fix"><strong>Fix:</strong> : Add a note about provisioned throughput costs and the importance of cleaning up.</div></li><li class="issue-item minor"><div><span class="issue-badge minor">Minor</span><span class="issue-title">&quot;Plan the work&quot; section mixes educational and actionable content</span></div><div class="issue-fix"><strong>Fix:</strong> : Clarify this is a &quot;don't do this&quot; example with explicit framing.</div></li><li class="issue-item minor"><div><span class="issue-badge minor">Minor</span><span class="issue-title">Partition key `/id` is atypical for CosmicWorks data</span></div><div class="issue-fix"><strong>Fix:</strong> : Consider using <code>/categoryId</code> or note that <code>/id</code> is used for simplicity in this quickstart.</div></li></ul>
+</div></details>
+
+<details class="gh-details">
+<summary>What's Working Well</summary>
+<div class="details-content">
+<div class="working-well-section"><div class="working-well-header"><h2>What's Working Well</h2><span class="working-well-count">5 strengths</span></div><div class="working-well"><div class="working-well-item">✓ Clear prompt decomposition strategy — The &quot;Plan the work&quot; section provides excellent guidance on breaking large tasks into atomic prompts, which is a genuine best practice for agent mode.</div><div class="working-well-item">✓ Correct Azure CLI commands — All underlying CLI operations (resource group, Cosmos DB account, database, container creation) use valid, current syntax that executes without modification.</div><div class="working-well-item">✓ Valid data source — The CosmicWorks GitHub URL is active and returns 295 well-structured JSON product items with proper `id` fields.</div><div class="working-well-item">✓ Complete lifecycle coverage — The doc covers setup through cleanup, ensuring readers don't leave orphaned Azure resources.</div><div class="working-well-item">✓ Multi-shell tab support — Python venv instructions cover PowerShell, Git Bash, and macOS/Linux in a tabbed format, accommodating different development environments.</div></div></div>
+</div></details>
+
+<details class="gh-details">
+<summary>Recommended Verification Steps</summary>
+<div class="details-content">
+<div class="verif-section"><h2>Recommended Verification Steps</h2><p class="verif-intro">Verification commands that should be added to the documentation so agents (and humans) can confirm each step actually succeeded before moving on.</p><table class="verif-table"><thead><tr><th>Step</th><th>Action</th><th>In Doc?</th><th>Recommended Verification Command</th></tr></thead><tbody><tr><td>Download data</td><td>&quot;Make sure to rename the file to products.json&quot;</td><td><span class="verif-status missing">No</span></td><td><span class="verif-cmd">python -c &quot;import json; print(len(json.load(open('products.json'))))&quot;</span> → <span class="verif-cmd">295</span></td></tr><tr><td>Create venv</td><td>(no verification)</td><td><span class="verif-status missing">No</span></td><td><span class="verif-cmd">python --version</span> from activated venv shows Python 3.9+</td></tr><tr><td>Sign in to Azure</td><td>&quot;Which tenant and subscription am I working with?&quot;</td><td><span class="verif-status present">Yes</span></td><td><span class="verif-cmd">az account show --query name -o tsv</span> → your subscription name</td></tr><tr><td>Create resource group</td><td>(no verification)</td><td><span class="verif-status missing">No</span></td><td><span class="verif-cmd">az group show --name &lt;rg&gt; --query properties.provisioningState -o tsv</span> → <span class="verif-cmd">Succeeded</span></td></tr><tr><td>Create Cosmos DB account</td><td>(no verification)</td><td><span class="verif-status missing">No</span></td><td><span class="verif-cmd">az cosmosdb show --name &lt;acct&gt; -g &lt;rg&gt; --query provisioningState -o tsv</span> → <span class="verif-cmd">Succeeded</span></td></tr><tr><td>Create database</td><td>(no verification)</td><td><span class="verif-status missing">No</span></td><td><span class="verif-cmd">az cosmosdb sql database show --account-name &lt;acct&gt; -g &lt;rg&gt; -n &lt;db&gt; --query name -o tsv</span></td></tr><tr><td>Create container</td><td>(no verification)</td><td><span class="verif-status missing">No</span></td><td><span class="verif-cmd">az cosmosdb sql container show ... --query resource.partitionKey.paths[0] -o tsv</span> → <span class="verif-cmd">/id</span></td></tr><tr><td>Upload data</td><td>(no verification)</td><td><span class="verif-status missing">No</span></td><td>Script output: <span class="verif-cmd">Upload complete: 295 items imported.</span></td></tr><tr><td>Verify import</td><td>&quot;query the first 5 items&quot; (prompt only)</td><td><span class="verif-status present">Yes</span></td><td>Python query returning 5 items with name/price fields</td></tr><tr><td>Clean up</td><td>(no verification)</td><td><span class="verif-status missing">No</span></td><td><span class="verif-cmd">az group show --name &lt;rg&gt;</span> → <span class="verif-cmd">ResourceGroupNotFound</span> error</td></tr></tbody></table><p style="font-size:0.82rem;color:#656d76;margin-top:0.5rem"><strong>Summary:</strong> 8 of 10 steps are missing verification entirely.</p></div>
+</div></details>
+
+<h2>Score Breakdown</h2>
+<table class="cat-table"><tr><th>Category</th><th colspan="2">Original</th><th colspan="2">Improved</th></tr><tr><td>Accuracy</td><td class="bar-cell"><div class="bar"><div class="bar-fill" style="width:70%;background:#9a6700"></div></div></td><td style="text-align:right">14/20</td><td class="bar-cell"><div class="bar"><div class="bar-fill" style="width:85%;background:#9a6700"></div></div></td><td style="text-align:right">17/20</td></tr>
+<tr><td>Agent-Friendly</td><td class="bar-cell"><div class="bar"><div class="bar-fill" style="width:45%;background:#cf222e"></div></div></td><td style="text-align:right">9/20</td><td class="bar-cell"><div class="bar"><div class="bar-fill" style="width:80%;background:#9a6700"></div></div></td><td style="text-align:right">16/20</td></tr>
+<tr><td>Completeness</td><td class="bar-cell"><div class="bar"><div class="bar-fill" style="width:73%;background:#9a6700"></div></div></td><td style="text-align:right">11/15</td><td class="bar-cell"><div class="bar"><div class="bar-fill" style="width:93%;background:#1a7f37"></div></div></td><td style="text-align:right">14/15</td></tr>
+<tr><td>Up-to-date</td><td class="bar-cell"><div class="bar"><div class="bar-fill" style="width:93%;background:#1a7f37"></div></div></td><td style="text-align:right">14/15</td><td class="bar-cell"><div class="bar"><div class="bar-fill" style="width:100%;background:#1a7f37"></div></div></td><td style="text-align:right">15/15</td></tr>
+<tr><td>Clarity</td><td class="bar-cell"><div class="bar"><div class="bar-fill" style="width:70%;background:#9a6700"></div></div></td><td style="text-align:right">7/10</td><td class="bar-cell"><div class="bar"><div class="bar-fill" style="width:90%;background:#1a7f37"></div></div></td><td style="text-align:right">9/10</td></tr>
+<tr><td>Verifiability</td><td class="bar-cell"><div class="bar"><div class="bar-fill" style="width:30%;background:#cf222e"></div></div></td><td style="text-align:right">3/10</td><td class="bar-cell"><div class="bar"><div class="bar-fill" style="width:90%;background:#1a7f37"></div></div></td><td style="text-align:right">9/10</td></tr>
+<tr><td>Error Handling</td><td class="bar-cell"><div class="bar"><div class="bar-fill" style="width:50%;background:#bc4c00"></div></div></td><td style="text-align:right">5/10</td><td class="bar-cell"><div class="bar"><div class="bar-fill" style="width:90%;background:#1a7f37"></div></div></td><td style="text-align:right">9/10</td></tr></table>
+
+<h2>Metrics</h2><div class="metrics-grid"><div class="metric-card"><div class="metric-value">12</div><div class="metric-label">Steps Executed</div></div><div class="metric-card"><div class="metric-value">9</div><div class="metric-label">Issues Found</div><div class="metric-note">9 total</div></div><div class="metric-card"><div class="metric-value">41</div><div class="metric-label">Tool Calls</div><div class="metric-note">4 unique tools</div></div><div class="metric-card"><div class="metric-value">0/10</div><div class="metric-label">Verification Gaps</div><div class="metric-note">0 missing, 2 partial</div></div></div>
+
+<details class="gh-details" open><summary>How We Tested This · 12 steps</summary><div class="details-content"><h3>Execution Timeline</h3><div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:0.75rem;font-size:0.75rem;color:#656d76"><span><span class="step-icon success" style="width:18px;height:18px;display:inline-flex;font-size:0.7rem">✓</span> Step succeeded</span><span><span class="step-icon failed" style="width:18px;height:18px;display:inline-flex;font-size:0.7rem">✗</span> Step failed</span><span><span class="step-icon skipped" style="width:18px;height:18px;display:inline-flex;font-size:0.7rem">⊘</span> Not executed (environment limitation)</span><span><span class="step-verif verif-missing">— no verification</span> Doc did not include a way to verify this step</span></div><div class="step"><div class="step-icon success">✓</div><div class="step-body"><div class="step-title">Step 1: Create a new directory on local computer</div><div class="step-cmd">New-Item -ItemType Directory -Path workspace -Force</div><div><span class="step-verif verif-present">✓ doc includes verification</span></div></div></div><div class="step"><div class="step-icon skipped">⊘</div><div class="step-body"><div class="step-title">Step 2: Open VS Code from that local directory</div></div></div><div class="step"><div class="step-icon skipped">⊘</div><div class="step-body"><div class="step-title">Step 3: Open GitHub Copilot chat and switch to agent mode</div></div></div><div class="step"><div class="step-icon success">✓</div><div class="step-body"><div class="step-title">Step 4: Download products data (products.json from CosmicWorks repo)</div><div class="step-cmd">Invoke-WebRequest -Uri &quot;https://raw.githubusercontent.com/AzureCosmosDB/CosmicWorks/main/data/database-v4/product&quot; -OutF</div><div class="step-issue-tag">⚠ Doc says navigate to GitHub page, click Download raw file icon, move file, rename to products.json — overly complex for </div><div><span class="step-verif verif-present">✓ doc includes verification</span></div></div></div><div class="step"><div class="step-icon success">✓</div><div class="step-body"><div class="step-title">Step 5: Create a Python virtual environment</div><div class="step-cmd">python -m venv .venv &amp;&amp; .\.venv\Scripts\Activate.ps1</div><div><span class="step-verif verif-present">✓ doc includes verification</span></div></div></div><div class="step"><div class="step-icon success">✓</div><div class="step-body"><div class="step-title">Step 6: Sign in to Azure tenant and choose subscription</div><div class="step-cmd">az account show</div><div><span class="step-verif verif-present">✓ doc includes verification</span></div></div></div><div class="step"><div class="step-icon success">✓</div><div class="step-body"><div class="step-title">Step 7: Create a resource group in West US region</div><div class="step-cmd">az group create --name rg-cosmosdb-import-test-20260504 --location westus</div><div><span class="step-verif verif-present">✓ doc includes verification</span></div></div></div><div class="step"><div class="step-icon success">✓</div><div class="step-body"><div class="step-title">Step 8: Create an Azure Cosmos DB for NoSQL account</div><div class="step-cmd">az cosmosdb create --name cosmos-import-test-20260504 --resource-group rg-cosmosdb-import-test-20260504 --kind GlobalDoc</div><div><span class="step-verif verif-present">✓ doc includes verification</span></div></div></div><div class="step"><div class="step-icon success">✓</div><div class="step-body"><div class="step-title">Step 9: Create a database in the Cosmos DB account</div><div class="step-cmd">az cosmosdb sql database create --account-name cosmos-import-test-20260504 --resource-group rg-cosmosdb-import-test-2026</div><div><span class="step-verif verif-present">✓ doc includes verification</span></div></div></div><div class="step"><div class="step-icon success">✓</div><div class="step-body"><div class="step-title">Step 10: Create a container with partition key /id</div><div class="step-cmd">az cosmosdb sql container create --account-name cosmos-import-test-20260504 --resource-group rg-cosmosdb-import-test-202</div><div><span class="step-verif verif-present">✓ doc includes verification</span></div></div></div><div class="step"><div class="step-icon success">✓</div><div class="step-body"><div class="step-title">Step 11: Generate Python code to upload JSON items to the container</div><div class="step-cmd">pip install azure-cosmos azure-identity &amp;&amp; python upload_data.py</div><div class="step-issue-tag">⚠ Doc says &quot;Agent mode creates the Python script and installs required dependencies&quot; — no sample code shown for what agent</div><div><span class="step-verif verif-present">✓ doc includes verification</span></div></div></div><div class="step"><div class="step-icon success">✓</div><div class="step-body"><div class="step-title">Step 12: Verify the import by querying first 5 items</div><div class="step-cmd">Python query: SELECT TOP 5 c.id, c.name, c.price FROM c</div><div class="step-issue-tag">⚠ Doc suggests using Azure CLI to query items, but `az cosmosdb sql query` is not available in standard CLI without extens</div><div><span class="step-verif verif-present">✓ doc includes verification</span></div></div></div><h2>Agent Difficulty Heatmap</h2><p style="color:var(--color-fg-muted);font-size:0.85rem;margin-bottom:0.75rem">0 difficult, 0 moderate, 12 easy steps — scored by failures, issues found, workarounds needed, and time vs average.</p><div class="heatmap-section"><div class="heatmap-bar"><div style="display:flex;align-items:center;gap:0.4rem"><span style="font-size:0.85rem;font-weight:600;color:var(--color-success)">✓</span><div><div class="heatmap-label">Step 1: Create a new directory on local computer</div></div></div><div class="heatmap-track"><div class="heatmap-fill" style="width:0%;background:var(--color-success)"></div></div><div class="heatmap-value">0</div><div class="heatmap-tier tier-smooth">🟢 Smooth</div></div><div class="heatmap-bar"><div style="display:flex;align-items:center;gap:0.4rem"><span style="font-size:0.85rem;font-weight:600;color:#0969da">⊘</span><div><div class="heatmap-label">Step 2: Open VS Code from that local directory</div></div></div><div class="heatmap-track"><div class="heatmap-fill" style="width:10%;background:var(--color-success)"></div></div><div class="heatmap-value">10</div><div class="heatmap-tier tier-smooth">🟢 Smooth</div></div><div class="heatmap-bar"><div style="display:flex;align-items:center;gap:0.4rem"><span style="font-size:0.85rem;font-weight:600;color:#0969da">⊘</span><div><div class="heatmap-label">Step 3: Open GitHub Copilot chat and switch to agent mode</div></div></div><div class="heatmap-track"><div class="heatmap-fill" style="width:10%;background:var(--color-success)"></div></div><div class="heatmap-value">10</div><div class="heatmap-tier tier-smooth">🟢 Smooth</div></div><div class="heatmap-bar"><div style="display:flex;align-items:center;gap:0.4rem"><span style="font-size:0.85rem;font-weight:600;color:var(--color-success)">✓</span><div><div class="heatmap-label">Step 4: Download products data (products.json from CosmicW</div><div style="font-size:0.72rem;color:var(--color-fg-muted);margin-top:0.1rem">1 issue</div></div></div><div class="heatmap-track"><div class="heatmap-fill" style="width:15%;background:var(--color-success)"></div></div><div class="heatmap-value">15</div><div class="heatmap-tier tier-smooth">🟢 Smooth</div></div><div class="heatmap-bar"><div style="display:flex;align-items:center;gap:0.4rem"><span style="font-size:0.85rem;font-weight:600;color:var(--color-success)">✓</span><div><div class="heatmap-label">Step 5: Create a Python virtual environment</div></div></div><div class="heatmap-track"><div class="heatmap-fill" style="width:0%;background:var(--color-success)"></div></div><div class="heatmap-value">0</div><div class="heatmap-tier tier-smooth">🟢 Smooth</div></div><div class="heatmap-bar"><div style="display:flex;align-items:center;gap:0.4rem"><span style="font-size:0.85rem;font-weight:600;color:var(--color-success)">✓</span><div><div class="heatmap-label">Step 6: Sign in to Azure tenant and choose subscription</div></div></div><div class="heatmap-track"><div class="heatmap-fill" style="width:0%;background:var(--color-success)"></div></div><div class="heatmap-value">0</div><div class="heatmap-tier tier-smooth">🟢 Smooth</div></div><div class="heatmap-bar"><div style="display:flex;align-items:center;gap:0.4rem"><span style="font-size:0.85rem;font-weight:600;color:var(--color-success)">✓</span><div><div class="heatmap-label">Step 7: Create a resource group in West US region</div></div></div><div class="heatmap-track"><div class="heatmap-fill" style="width:0%;background:var(--color-success)"></div></div><div class="heatmap-value">0</div><div class="heatmap-tier tier-smooth">🟢 Smooth</div></div><div class="heatmap-bar"><div style="display:flex;align-items:center;gap:0.4rem"><span style="font-size:0.85rem;font-weight:600;color:var(--color-success)">✓</span><div><div class="heatmap-label">Step 8: Create an Azure Cosmos DB for NoSQL account</div></div></div><div class="heatmap-track"><div class="heatmap-fill" style="width:0%;background:var(--color-success)"></div></div><div class="heatmap-value">0</div><div class="heatmap-tier tier-smooth">🟢 Smooth</div></div><div class="heatmap-bar"><div style="display:flex;align-items:center;gap:0.4rem"><span style="font-size:0.85rem;font-weight:600;color:var(--color-success)">✓</span><div><div class="heatmap-label">Step 9: Create a database in the Cosmos DB account</div></div></div><div class="heatmap-track"><div class="heatmap-fill" style="width:0%;background:var(--color-success)"></div></div><div class="heatmap-value">0</div><div class="heatmap-tier tier-smooth">🟢 Smooth</div></div><div class="heatmap-bar"><div style="display:flex;align-items:center;gap:0.4rem"><span style="font-size:0.85rem;font-weight:600;color:var(--color-success)">✓</span><div><div class="heatmap-label">Step 10: Create a container with partition key /id</div></div></div><div class="heatmap-track"><div class="heatmap-fill" style="width:0%;background:var(--color-success)"></div></div><div class="heatmap-value">0</div><div class="heatmap-tier tier-smooth">🟢 Smooth</div></div><div class="heatmap-bar"><div style="display:flex;align-items:center;gap:0.4rem"><span style="font-size:0.85rem;font-weight:600;color:var(--color-success)">✓</span><div><div class="heatmap-label">Step 11: Generate Python code to upload JSON items to the c</div><div style="font-size:0.72rem;color:var(--color-fg-muted);margin-top:0.1rem">1 issue</div></div></div><div class="heatmap-track"><div class="heatmap-fill" style="width:15%;background:var(--color-success)"></div></div><div class="heatmap-value">15</div><div class="heatmap-tier tier-smooth">🟢 Smooth</div></div><div class="heatmap-bar"><div style="display:flex;align-items:center;gap:0.4rem"><span style="font-size:0.85rem;font-weight:600;color:var(--color-success)">✓</span><div><div class="heatmap-label">Step 12: Verify the import by querying first 5 items</div><div style="font-size:0.72rem;color:var(--color-fg-muted);margin-top:0.1rem">1 issue</div></div></div><div class="heatmap-track"><div class="heatmap-fill" style="width:15%;background:var(--color-success)"></div></div><div class="heatmap-value">15</div><div class="heatmap-tier tier-smooth">🟢 Smooth</div></div><div class="heatmap-legend"><span style="font-weight:500">Difficulty:</span><div class="heatmap-legend-item"><span class="heatmap-legend-swatch" style="background:var(--color-success)"></span> Easy (0-20)</div><div class="heatmap-legend-item"><span class="heatmap-legend-swatch" style="background:var(--color-warning)"></span> Moderate (21-50)</div><div class="heatmap-legend-item"><span class="heatmap-legend-swatch" style="background:var(--color-danger)"></span> Difficult (51-100)</div></div></div><h2>Challenge Timeline</h2><p style="color:var(--color-fg-muted);font-size:0.85rem;margin-bottom:0.75rem">0 failed steps, 3 issues detected, 0 workarounds applied during execution.</p><div class="challenge-tl"><div class="challenge-tl-item"><div class="challenge-tl-marker success">✓</div><div class="challenge-tl-body"><div class="challenge-tl-step">Step 1: Create a new directory on local computer</div></div></div><div class="challenge-tl-item"><div class="challenge-tl-marker skipped">⊘</div><div class="challenge-tl-body"><div class="challenge-tl-step">Step 2: Open VS Code from that local directory</div></div></div><div class="challenge-tl-item"><div class="challenge-tl-marker skipped">⊘</div><div class="challenge-tl-body"><div class="challenge-tl-step">Step 3: Open GitHub Copilot chat and switch to agent mode</div></div></div><div class="challenge-tl-item"><div class="challenge-tl-marker issue">!</div><div class="challenge-tl-body"><div class="challenge-tl-step">Step 4: Download products data (products.json from CosmicWorks repo)</div><div style="background:#fff5f5;border:1px solid #cf222e22;border-left:3px solid #cf222e;border-radius:6px;padding:0.4rem 0.65rem;margin:0.3rem 0;font-size:0.82rem">🔴 Doc says navigate to GitHub page, click Download raw file icon, move file, rename to products.json — overly complex for </div></div></div><div class="challenge-tl-item"><div class="challenge-tl-marker success">✓</div><div class="challenge-tl-body"><div class="challenge-tl-step">Step 5: Create a Python virtual environment</div></div></div><div class="challenge-tl-item"><div class="challenge-tl-marker success">✓</div><div class="challenge-tl-body"><div class="challenge-tl-step">Step 6: Sign in to Azure tenant and choose subscription</div></div></div><div class="challenge-tl-item"><div class="challenge-tl-marker success">✓</div><div class="challenge-tl-body"><div class="challenge-tl-step">Step 7: Create a resource group in West US region</div></div></div><div class="challenge-tl-item"><div class="challenge-tl-marker success">✓</div><div class="challenge-tl-body"><div class="challenge-tl-step">Step 8: Create an Azure Cosmos DB for NoSQL account</div></div></div><div class="challenge-tl-item"><div class="challenge-tl-marker success">✓</div><div class="challenge-tl-body"><div class="challenge-tl-step">Step 9: Create a database in the Cosmos DB account</div></div></div><div class="challenge-tl-item"><div class="challenge-tl-marker success">✓</div><div class="challenge-tl-body"><div class="challenge-tl-step">Step 10: Create a container with partition key /id</div></div></div><div class="challenge-tl-item"><div class="challenge-tl-marker issue">!</div><div class="challenge-tl-body"><div class="challenge-tl-step">Step 11: Generate Python code to upload JSON items to the container</div><div style="background:#fff5f5;border:1px solid #cf222e22;border-left:3px solid #cf222e;border-radius:6px;padding:0.4rem 0.65rem;margin:0.3rem 0;font-size:0.82rem">🔴 Doc says &quot;Agent mode creates the Python script and installs required dependencies&quot; — no sample code shown for what agent</div></div></div><div class="challenge-tl-item"><div class="challenge-tl-marker issue">!</div><div class="challenge-tl-body"><div class="challenge-tl-step">Step 12: Verify the import by querying first 5 items</div><div style="background:#fff5f5;border:1px solid #cf222e22;border-left:3px solid #cf222e;border-radius:6px;padding:0.4rem 0.65rem;margin:0.3rem 0;font-size:0.82rem">🔴 Doc suggests using Azure CLI to query items, but `az cosmosdb sql query` is not available in standard CLI without extens</div></div></div></div></div></details>
+
+<details class="gh-details" open><summary>Tool &amp; Skills Usage</summary><div class="details-content"><h2>Tool &amp; MCP Usage</h2>
+<div class="tool-dashboard">
+<div class="tool-stat-card"><div class="tool-stat-value">41</div><div class="tool-stat-label">Total Tool Calls</div></div>
+<div class="tool-stat-card"><div class="tool-stat-value">4</div><div class="tool-stat-label">Unique Tools</div></div>
+<div class="tool-stat-card"><div class="tool-stat-value">0</div><div class="tool-stat-label">Skills Invoked</div></div>
+<div class="tool-stat-card"><div class="tool-stat-value">0</div><div class="tool-stat-label">Retries</div></div>
+</div>
+<p style="font-size:0.82rem;color:#656d76;margin:0.5rem 0">⚪ MCP Servers: Azure MCP, Foundry MCP (configured, 0 calls)</p>
+<span style="display:none">Standard Tools</span>
+<h3 style="font-size:0.9rem;margin-top:1rem">Tool Breakdown</h3>
+<table class="tool-table"><thead><tr><th>Tool</th><th class="tool-count">Calls</th><th>Usage</th></tr></thead><tbody>
+<tr><td>powershell</td><td class="tool-count">31</td><td><div class="bar" style="width:100px"><div class="bar-fill" style="width:100%;background:#0969da"></div></div></td></tr>
+<tr><td>report_intent</td><td class="tool-count">6</td><td><div class="bar" style="width:100px"><div class="bar-fill" style="width:19%;background:#0969da"></div></div></td></tr>
+<tr><td>view</td><td class="tool-count">3</td><td><div class="bar" style="width:100px"><div class="bar-fill" style="width:10%;background:#0969da"></div></div></td></tr>
+<tr><td>read_powershell</td><td class="tool-count">1</td><td><div class="bar" style="width:100px"><div class="bar-fill" style="width:3%;background:#0969da"></div></div></td></tr>
+</tbody></table>
+</div></details>
+
+
+
+    <details class="gh-details"><summary>Before / After Comparison · 5 key changes</summary><div class="details-content"><p style="font-size:0.85rem;color:#656d76;margin-bottom:0.75rem">The improved documentation is not a recommended full rewrite — it targets specific additions (verification commands, platform-aware syntax, prerequisite pins) that help coding agents execute the doc autonomously. The original prose and structure are preserved.</p><p style="font-size:0.85rem;margin-bottom:1rem"><a href="improved.md">View full improved markdown →</a></p><div class="ba-cards"><div class="ba-card"><div class="ba-card-header">Build the solution</div><div class="ba-side ba-original"><div class="ba-col-header">Original</div><div class="ba-content">Use the plan to formulate the prompts needed to create Azure resources and write the code. Specify the outcome you want.
+
+### Sign in to your tenant and choose your subscription
+
+If you work with multiple tenants and subscriptions, make sure you're signed in to the correct one:
+
+```text
+How do I log into my Azure tenant and choose an Azure subscription I want to work with?
+```
+
+GitHub Copilot responds with steps similar to:
+
+1. Open a terminal.
+1. Sign in to Azure: `az login`
+1. List available s…</div></div><div class="ba-side ba-improved"><div class="ba-col-header">Improved</div><div class="ba-content">Use the following prompts in sequence. Replace all `&lt;placeholder&gt;` values with your own names before submitting each prompt.
+
+| Placeholder | Description | Example |
+|---|---|---|
+| `&lt;resource-group-name&gt;` | Name for your Azure resource group | `rg-cosmosdb-quickstart` |
+| `&lt;cosmos-db-account-name&gt;` | Globally unique Cosmos DB account name | `cosmos-myapp-dev` |
+| `&lt;database-name&gt;` | Name for your database | `cosmicworks` |
+| `&lt;container-name&gt;` | Name for your container | `products` |
+
+### Sign …</div></div></div><div class="ba-card"><div class="ba-card-header">Set up the environment</div><div class="ba-side ba-original"><div class="ba-col-header">Original</div><div class="ba-content">1. Create a new directory on your local computer.
+1. Open Visual Studio Code from that local directory (workspace).
+1. In Visual Studio Code, open the GitHub Copilot chat window.
+1. Switch to agent mode and select your preferred model.
+1. Download the products data and save it into the new local directory (workspace).
+
+To download the products data, navigate to the [CosmicWorks product data](https://github.com/AzureCosmosDB/CosmicWorks/blob/main/data/database-v4/product). Select the **Download r…</div></div><div class="ba-side ba-improved"><div class="ba-col-header">Improved</div><div class="ba-content">### Create a workspace directory
+
+1. Create a new directory on your local computer for this project.
+1. Open VS Code from that directory. You can run `code .` in a terminal from inside the directory.
+
+**Verify**: The VS Code Explorer panel shows your empty directory as the workspace root.
+
+### Configure agent mode
+
+1. In VS Code, open the GitHub Copilot Chat panel by selecting **View** &gt; **Chat**.
+1. At the top of the chat panel, select the mode dropdown and choose **Agent**.
+1. Select your pref…</div></div></div><div class="ba-card"><div class="ba-card-header">Verify the import</div><div class="ba-side ba-original"><div class="ba-col-header">Original</div><div class="ba-content">After the script runs successfully, verify that the data was imported:
+
+```text
+Use the Azure CLI to query the first 5 items from the `&lt;container-name&gt;` container in my Cosmos DB database.
+```</div></div><div class="ba-side ba-improved"><div class="ba-col-header">Improved</div><div class="ba-content">After the script runs, confirm the data exists in your container. Use this prompt:
+
+```text
+Query the first 5 items from the `&lt;container-name&gt;` container in my Cosmos DB database and show their names and prices.
+```
+
+Alternatively, add a verification script. Ask agent mode:
+
+```text
+Generate a Python script that queries the first 5 items from the `&lt;container-name&gt;` container and prints their id, name, and price fields.
+```
+
+**Verify**: The output shows product data, for example:
+
+```
+Query retur…</div></div></div><div class="ba-card"><div class="ba-card-header">Plan the work</div><div class="ba-side ba-original"><div class="ba-col-header">Original</div><div class="ba-content">It's useful to break up work into smaller executable chunks. For example, this prompt is ambitious and might require several iterations:
+
+```text
+I want to create a Cosmos DB database using data from the CosmicWorks sample (https://github.com/AzureCosmosDB/CosmicWorks) but the instructions on that page explain how to do this with .NET and I want to use Python.
+```
+
+A better approach is to think about the two high-level tasks:
+
+1. **Create Azure resources** — create a resource group, an Azure Cos…</div></div><div class="ba-side ba-improved"><div class="ba-col-header">Improved</div><div class="ba-content">Breaking work into smaller prompts produces better results than a single large request. Structure your prompts around these two high-level tasks:
+
+1. **Create Azure resources** — resource group, Azure Cosmos DB account, database, and container.
+1. **Import data** — generate and run Python code to upload JSON records into the container.
+
+Each of the following sections provides the specific prompt to give agent mode. Let agent mode control the execution — select **Continue** or **Always allow** wh…</div></div></div><div class="ba-card"><div class="ba-card-header">Prerequisites</div><div class="ba-side ba-original"><div class="ba-col-header">Original</div><div class="ba-content">- An Azure subscription. If you don't have one, [create a free account](https://azure.microsoft.com/free/).
+- [Visual Studio Code](https://code.visualstudio.com/) with the [GitHub Copilot for Azure](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azure-github-copilot) extension installed.
+- [Python 3.9 or later](https://www.python.org/downloads/)
+- [Azure CLI](/cli/azure/install-azure-cli)
+- A GitHub Copilot subscription with access to agent mode.
+- Familiarity with [get…</div></div><div class="ba-side ba-improved"><div class="ba-col-header">Improved</div><div class="ba-content">| Prerequisite | Install | Verify |
+|---|---|---|
+| Azure subscription | [Create free account](https://azure.microsoft.com/free/) | `az account show` |
+| Visual Studio Code | [Download VS Code](https://code.visualstudio.com/) | `code --version` |
+| GitHub Copilot for Azure extension | [Install from Marketplace](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azure-github-copilot) | Check **Extensions** panel in VS Code |
+| Python 3.9 or later | [Download Python](https://…</div></div></div></div></div></details>
+
+    <details class="gh-details"><summary>📄 Full Improved Documentation (click to expand)</summary><div class="details-content"><p style="font-size:0.85rem;color:#656d76;margin-bottom:0.75rem">This is the full improved documentation generated by the review agent. It preserves the original prose and structure while adding verification commands, platform-aware syntax, and prerequisite pins for autonomous execution.</p><div class="improved-doc"><hr />
+<p>title: "Quickstart: Import data into Azure Cosmos DB with Copilot agent mode"<br />
+description: Learn how to use GitHub Copilot for Azure agent mode to create Azure Cosmos DB resources and import sample data using Python prompts in Visual Studio Code.<br />
+author: bobtabor-msft<br />
+ms.author: rotabor<br />
+keywords: github, copilot, ai, azure, cosmos db<br />
+ms.service: github-copilot-for-azure<br />
+ms.topic: quickstart<br />
+ms.date: 05/04/2026<br />
+ms.collection: ce-skilling-ai-copilot<br />
+ms.custom: msecd-doc-authoring-108<br />
+ai-usage: ai-generated</p>
+<h1 id="customer-intent-as-a-developer-i-want-to-use-github-copilot-agent-mode-to-create-azure-cosmos-db-resources-and-import-data-so-that-i-can-quickly-set-up-a-database-without-writing-infrastructure-code-manually">customer intent: As a developer, I want to use GitHub Copilot agent mode to create Azure Cosmos DB resources and import data so that I can quickly set up a database without writing infrastructure code manually.</h1>
+<hr />
+<h1 id="quickstart-import-data-into-azure-cosmos-db-using-github-copilot-for-azure-agent-mode">Quickstart: Import data into Azure Cosmos DB using GitHub Copilot for Azure agent mode</h1>
+<p>In this quickstart, you use GitHub Copilot for Azure agent mode to create Azure Cosmos DB for NoSQL resources and import sample product data using Python. Agent mode takes action in Visual Studio Code (VS Code) — creating files, executing terminal commands, and managing dependencies on your behalf.</p>
+<h2 id="quick-start-summary">Quick start summary</h2>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Method</th>
+<th>Estimated time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Set up environment</td>
+<td>Manual + agent mode</td>
+<td>5 minutes</td>
+</tr>
+<tr>
+<td>Create Azure resources</td>
+<td>Agent mode prompts</td>
+<td>5–8 minutes</td>
+</tr>
+<tr>
+<td>Import data</td>
+<td>Agent mode generates Python</td>
+<td>2–3 minutes</td>
+</tr>
+<tr>
+<td>Verify and clean up</td>
+<td>Agent mode or CLI</td>
+<td>2 minutes</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td></td>
+<td><strong>15–20 minutes</strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="prerequisites">Prerequisites</h2>
+<table>
+<thead>
+<tr>
+<th>Prerequisite</th>
+<th>Install</th>
+<th>Verify</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Azure subscription</td>
+<td><a href="https://azure.microsoft.com/free/">Create free account</a></td>
+<td><code>az account show</code></td>
+</tr>
+<tr>
+<td>Visual Studio Code</td>
+<td><a href="https://code.visualstudio.com/">Download VS Code</a></td>
+<td><code>code --version</code></td>
+</tr>
+<tr>
+<td>GitHub Copilot for Azure extension</td>
+<td><a href="https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azure-github-copilot">Install from Marketplace</a></td>
+<td>Check <strong>Extensions</strong> panel in VS Code</td>
+</tr>
+<tr>
+<td>Python 3.9 or later</td>
+<td><a href="https://www.python.org/downloads/">Download Python</a></td>
+<td><code>python --version</code></td>
+</tr>
+<tr>
+<td>Azure CLI 2.60 or later</td>
+<td><a href="/cli/azure/install-azure-cli">Install Azure CLI</a></td>
+<td><code>az --version</code></td>
+</tr>
+<tr>
+<td>GitHub Copilot subscription</td>
+<td><a href="https://github.com/features/copilot">GitHub Copilot plans</a></td>
+<td>Agent mode available in Copilot Chat</td>
+</tr>
+</tbody>
+</table>
+<p>You also need:</p>
+<ul>
+<li>Familiarity with <a href="get-started.md">getting started with GitHub Copilot for Azure</a>.</li>
+<li>Sufficient Azure role-based access control (RBAC) permissions to create resource groups and Azure Cosmos DB resources (Contributor role or higher on the subscription).</li>
+</ul>
+<h2 id="set-up-the-environment">Set up the environment</h2>
+<h3 id="create-a-workspace-directory">Create a workspace directory</h3>
+<ol>
+<li>Create a new directory on your local computer for this project.</li>
+<li>Open VS Code from that directory. You can run <code>code .</code> in a terminal from inside the directory.</li>
+</ol>
+<p><strong>Verify</strong>: The VS Code Explorer panel shows your empty directory as the workspace root.</p>
+<h3 id="configure-agent-mode">Configure agent mode</h3>
+<ol>
+<li>In VS Code, open the GitHub Copilot Chat panel by selecting <strong>View</strong> &gt; <strong>Chat</strong>.</li>
+<li>At the top of the chat panel, select the mode dropdown and choose <strong>Agent</strong>.</li>
+<li>Select your preferred language model (for example, GPT-4o or Claude Sonnet).</li>
+</ol>
+<p><strong>Verify</strong>: The chat panel shows "Agent" mode in the mode selector and displays available tools.</p>
+<h3 id="download-the-sample-data">Download the sample data</h3>
+<p>Download the CosmicWorks product data file directly using one of these methods:</p>
+<p><strong>Option A: Use a terminal command</strong></p>
+<h1 id="powershell"><a href="#tab/powershell">PowerShell</a></h1>
+<div class="codehilite"><pre><span></span><code><span class="nb">Invoke-WebRequest</span> <span class="n">-Uri</span> <span class="s2">&quot;https://raw.githubusercontent.com/AzureCosmosDB/CosmicWorks/main/data/database-v4/product&quot;</span> <span class="n">-OutFile</span> <span class="s2">&quot;products.json&quot;</span>
+</code></pre></div>
+
+<h1 id="bash-macos-linux"><a href="#tab/bash">Bash / macOS / Linux</a></h1>
+<div class="codehilite"><pre><span></span><code>curl<span class="w"> </span>-o<span class="w"> </span>products.json<span class="w"> </span><span class="s2">&quot;https://raw.githubusercontent.com/AzureCosmosDB/CosmicWorks/main/data/database-v4/product&quot;</span>
+</code></pre></div>
+
+<hr />
+<p><strong>Option B: Download from GitHub</strong></p>
+<ol>
+<li>Navigate to the <a href="https://github.com/AzureCosmosDB/CosmicWorks/blob/main/data/database-v4/product">CosmicWorks product data</a> page.</li>
+<li>Select the <strong>Download raw file</strong> icon (download arrow) to save the file.</li>
+<li>Move the downloaded file into your workspace directory.</li>
+<li>Rename the file to <code>products.json</code>.</li>
+</ol>
+<p><strong>Verify</strong>: Run the following command to confirm the file contains product data:</p>
+<h1 id="powershell_1"><a href="#tab/powershell">PowerShell</a></h1>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nb">Get-Content</span> <span class="n">products</span><span class="p">.</span><span class="n">json</span> <span class="p">|</span> <span class="nb">ConvertFrom-Json</span><span class="p">).</span><span class="n">Count</span>
+</code></pre></div>
+
+<h1 id="bash-macos-linux_1"><a href="#tab/bash">Bash / macOS / Linux</a></h1>
+<div class="codehilite"><pre><span></span><code>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import json; print(len(json.load(open(&#39;products.json&#39;))))&quot;</span>
+</code></pre></div>
+
+<hr />
+<p>Expected output: <code>295</code> (the number of product items in the dataset).</p>
+<h2 id="create-a-python-virtual-environment">Create a Python virtual environment</h2>
+<p>Ask GitHub Copilot agent mode to create the environment:</p>
+<div class="codehilite"><pre><span></span><code>Create a Python virtual environment in this workspace
+</code></pre></div>
+
+<p>Agent mode creates the <code>.venv</code> directory and activates it. Alternatively, create the environment yourself using a terminal:</p>
+<h1 id="powershell_2"><a href="#tab/powershell">PowerShell</a></h1>
+<div class="codehilite"><pre><span></span><code><span class="n">python</span> <span class="n">-m</span> <span class="n">venv</span> <span class="p">.</span><span class="n">venv</span>
+<span class="p">.\.</span><span class="n">venv</span><span class="p">\</span><span class="n">Scripts</span><span class="p">\</span><span class="n">Activate</span><span class="p">.</span><span class="n">ps1</span>
+</code></pre></div>
+
+<h1 id="git-bash"><a href="#tab/bash">Git Bash</a></h1>
+<div class="codehilite"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
+<span class="nb">source</span><span class="w"> </span>.venv/Scripts/activate
+</code></pre></div>
+
+<h1 id="macoslinux"><a href="#tab/linux">macOS/Linux</a></h1>
+<div class="codehilite"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
+<span class="nb">source</span><span class="w"> </span>.venv/bin/activate
+</code></pre></div>
+
+<hr />
+<p><strong>Verify</strong>: Your terminal prompt shows <code>(.venv)</code> as a prefix, confirming the virtual environment is active. Run:</p>
+<div class="codehilite"><pre><span></span><code>python<span class="w"> </span>--version
+</code></pre></div>
+
+<p>Expected output: Python 3.9 or later (for example, <code>Python 3.12.4</code>).</p>
+<h2 id="plan-the-work">Plan the work</h2>
+<p>Breaking work into smaller prompts produces better results than a single large request. Structure your prompts around these two high-level tasks:</p>
+<ol>
+<li><strong>Create Azure resources</strong> — resource group, Azure Cosmos DB account, database, and container.</li>
+<li><strong>Import data</strong> — generate and run Python code to upload JSON records into the container.</li>
+</ol>
+<p>Each of the following sections provides the specific prompt to give agent mode. Let agent mode control the execution — select <strong>Continue</strong> or <strong>Always allow</strong> when it asks to run terminal commands.</p>
+<p>:::image type="content" source="media/agent-mode-cosmosdb-import/github-copilot-continue-always-allow.png" alt-text="Screenshot that shows response to a prompt with an option highlighted to always allow.":::</p>
+<h2 id="build-the-solution">Build the solution</h2>
+<p>Use the following prompts in sequence. Replace all <code>&lt;placeholder&gt;</code> values with your own names before submitting each prompt.</p>
+<table>
+<thead>
+<tr>
+<th>Placeholder</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;resource-group-name&gt;</code></td>
+<td>Name for your Azure resource group</td>
+<td><code>rg-cosmosdb-quickstart</code></td>
+</tr>
+<tr>
+<td><code>&lt;cosmos-db-account-name&gt;</code></td>
+<td>Globally unique Cosmos DB account name</td>
+<td><code>cosmos-myapp-dev</code></td>
+</tr>
+<tr>
+<td><code>&lt;database-name&gt;</code></td>
+<td>Name for your database</td>
+<td><code>cosmicworks</code></td>
+</tr>
+<tr>
+<td><code>&lt;container-name&gt;</code></td>
+<td>Name for your container</td>
+<td><code>products</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="sign-in-to-azure">Sign in to Azure</h3>
+<p>If you work with multiple tenants and subscriptions, confirm you're signed in to the correct one. Use this prompt:</p>
+<div class="codehilite"><pre><span></span><code>How do I sign in to my Azure tenant and choose an Azure subscription to work with?
+</code></pre></div>
+
+<p>Agent mode responds with steps similar to:</p>
+<ol>
+<li>Open a terminal.</li>
+<li>Sign in to Azure: <code>az login</code></li>
+<li>List available subscriptions: <code>az account list --output table</code></li>
+<li>Set the active subscription: <code>az account set --subscription "&lt;your-subscription-id&gt;"</code></li>
+</ol>
+<p>Follow these steps. To confirm your active context at any time, use this prompt:</p>
+<div class="codehilite"><pre><span></span><code>Which tenant and subscription am I working with?
+</code></pre></div>
+
+<p><strong>Verify</strong>: Run the following command in your terminal:</p>
+<div class="codehilite"><pre><span></span><code><span class="nv">az</span><span class="w"> </span><span class="nv">account</span><span class="w"> </span><span class="k">show</span><span class="w"> </span><span class="o">--</span><span class="nv">query</span><span class="w"> </span><span class="s2">&quot;{subscription:name, tenantId:tenantId}&quot;</span><span class="w"> </span><span class="o">--</span><span class="nv">output</span><span class="w"> </span><span class="nv">table</span>
+</code></pre></div>
+
+<p>Expected output: A table showing your subscription name and tenant ID.</p>
+<h3 id="create-a-resource-group">Create a resource group</h3>
+<p>Use this prompt:</p>
+<div class="codehilite"><pre><span></span><code>Use the Azure CLI to create a resource group named `&lt;resource-group-name&gt;` in the `westus` region
+</code></pre></div>
+
+<p>Replace <code>&lt;resource-group-name&gt;</code> with a unique name for your resource group.</p>
+<p><strong>Verify</strong>: Run in your terminal:</p>
+<div class="codehilite"><pre><span></span><code><span class="nv">az</span><span class="w"> </span><span class="nv">group</span><span class="w"> </span><span class="k">show</span><span class="w"> </span><span class="o">--</span><span class="nv">name</span><span class="w"> </span><span class="o">&lt;</span><span class="nv">resource</span><span class="o">-</span><span class="nv">group</span><span class="o">-</span><span class="nv">name</span><span class="o">&gt;</span><span class="w"> </span><span class="o">--</span><span class="nv">query</span><span class="w"> </span><span class="s2">&quot;{name:name, location:location, state:properties.provisioningState}&quot;</span><span class="w"> </span><span class="o">--</span><span class="nv">output</span><span class="w"> </span><span class="nv">table</span>
+</code></pre></div>
+
+<p>Expected output:</p>
+<div class="codehilite"><pre><span></span><code>Name                      Location    State
+------------------------  ----------  ---------
+&lt;resource-group-name&gt;     westus      Succeeded
+</code></pre></div>
+
+<h3 id="create-an-azure-cosmos-db-account">Create an Azure Cosmos DB account</h3>
+<p>Use this prompt:</p>
+<div class="codehilite"><pre><span></span><code>Use the Azure CLI to create a new Azure Cosmos DB for NoSQL account named `&lt;cosmos-db-account-name&gt;` in the resource group `&lt;resource-group-name&gt;`
+</code></pre></div>
+
+<blockquote>
+<p>[!NOTE]<br />
+This step takes 3–5 minutes. Azure Cosmos DB account creation involves global DNS registration and resource provisioning.</p>
+</blockquote>
+<p><strong>Verify</strong>: Run in your terminal:</p>
+<div class="codehilite"><pre><span></span><code><span class="nv">az</span><span class="w"> </span><span class="nv">cosmosdb</span><span class="w"> </span><span class="k">show</span><span class="w"> </span><span class="o">--</span><span class="nv">name</span><span class="w"> </span><span class="o">&lt;</span><span class="nv">cosmos</span><span class="o">-</span><span class="nv">db</span><span class="o">-</span><span class="nv">account</span><span class="o">-</span><span class="nv">name</span><span class="o">&gt;</span><span class="w"> </span><span class="o">--</span><span class="nv">resource</span><span class="o">-</span><span class="nv">group</span><span class="w"> </span><span class="o">&lt;</span><span class="nv">resource</span><span class="o">-</span><span class="nv">group</span><span class="o">-</span><span class="nv">name</span><span class="o">&gt;</span><span class="w"> </span><span class="o">--</span><span class="nv">query</span><span class="w"> </span><span class="s2">&quot;{name:name, status:provisioningState, endpoint:documentEndpoint}&quot;</span><span class="w"> </span><span class="o">--</span><span class="nv">output</span><span class="w"> </span><span class="nv">table</span>
+</code></pre></div>
+
+<p>Expected output:</p>
+<div class="codehilite"><pre><span></span><code><span class="c">Name                      Status     Endpoint</span>
+<span class="nb">------------------------</span><span class="c">  </span><span class="nb">---------</span><span class="c">  </span><span class="nb">------------------------------------------------</span>
+<span class="nv">&lt;</span><span class="c">cosmos</span><span class="nb">-</span><span class="c">db</span><span class="nb">-</span><span class="c">account</span><span class="nb">-</span><span class="c">name</span><span class="nv">&gt;</span><span class="c">  Succeeded  https://</span><span class="nv">&lt;</span><span class="c">cosmos</span><span class="nb">-</span><span class="c">db</span><span class="nb">-</span><span class="c">account</span><span class="nb">-</span><span class="c">name</span><span class="nv">&gt;</span><span class="nt">.</span><span class="c">documents</span><span class="nt">.</span><span class="c">azure</span><span class="nt">.</span><span class="c">com:443/</span>
+</code></pre></div>
+
+<h3 id="create-a-database">Create a database</h3>
+<p>Use this prompt:</p>
+<div class="codehilite"><pre><span></span><code>Use the Azure CLI to create a new database named `&lt;database-name&gt;` in the Azure Cosmos DB account `&lt;cosmos-db-account-name&gt;`
+</code></pre></div>
+
+<p><strong>Verify</strong>: Run in your terminal:</p>
+<div class="codehilite"><pre><span></span><code><span class="nv">az</span><span class="w"> </span><span class="nv">cosmosdb</span><span class="w"> </span><span class="nv">sql</span><span class="w"> </span><span class="nv">database</span><span class="w"> </span><span class="k">show</span><span class="w"> </span><span class="o">--</span><span class="nv">account</span><span class="o">-</span><span class="nv">name</span><span class="w"> </span><span class="o">&lt;</span><span class="nv">cosmos</span><span class="o">-</span><span class="nv">db</span><span class="o">-</span><span class="nv">account</span><span class="o">-</span><span class="nv">name</span><span class="o">&gt;</span><span class="w"> </span><span class="o">--</span><span class="nv">resource</span><span class="o">-</span><span class="nv">group</span><span class="w"> </span><span class="o">&lt;</span><span class="nv">resource</span><span class="o">-</span><span class="nv">group</span><span class="o">-</span><span class="nv">name</span><span class="o">&gt;</span><span class="w"> </span><span class="o">--</span><span class="nv">name</span><span class="w"> </span><span class="o">&lt;</span><span class="nv">database</span><span class="o">-</span><span class="nv">name</span><span class="o">&gt;</span><span class="w"> </span><span class="o">--</span><span class="nv">query</span><span class="w"> </span><span class="s2">&quot;{name:name}&quot;</span><span class="w"> </span><span class="o">--</span><span class="nv">output</span><span class="w"> </span><span class="nv">table</span>
+</code></pre></div>
+
+<p>Expected output:</p>
+<div class="codehilite"><pre><span></span><code>Name
+--------------
+&lt;database-name&gt;
+</code></pre></div>
+
+<h3 id="create-a-container">Create a container</h3>
+<p>Use this prompt:</p>
+<div class="codehilite"><pre><span></span><code>Use the Azure CLI to create a new container named `&lt;container-name&gt;` with partition key `/id` in the `&lt;database-name&gt;` database of the `&lt;cosmos-db-account-name&gt;` account
+</code></pre></div>
+
+<p><strong>Verify</strong>: Run in your terminal:</p>
+<div class="codehilite"><pre><span></span><code><span class="nv">az</span><span class="w"> </span><span class="nv">cosmosdb</span><span class="w"> </span><span class="nv">sql</span><span class="w"> </span><span class="nv">container</span><span class="w"> </span><span class="k">show</span><span class="w"> </span><span class="o">--</span><span class="nv">account</span><span class="o">-</span><span class="nv">name</span><span class="w"> </span><span class="o">&lt;</span><span class="nv">cosmos</span><span class="o">-</span><span class="nv">db</span><span class="o">-</span><span class="nv">account</span><span class="o">-</span><span class="nv">name</span><span class="o">&gt;</span><span class="w"> </span><span class="o">--</span><span class="nv">resource</span><span class="o">-</span><span class="nv">group</span><span class="w"> </span><span class="o">&lt;</span><span class="nv">resource</span><span class="o">-</span><span class="nv">group</span><span class="o">-</span><span class="nv">name</span><span class="o">&gt;</span><span class="w"> </span><span class="o">--</span><span class="nv">database</span><span class="o">-</span><span class="nv">name</span><span class="w"> </span><span class="o">&lt;</span><span class="nv">database</span><span class="o">-</span><span class="nv">name</span><span class="o">&gt;</span><span class="w"> </span><span class="o">--</span><span class="nv">name</span><span class="w"> </span><span class="o">&lt;</span><span class="nv">container</span><span class="o">-</span><span class="nv">name</span><span class="o">&gt;</span><span class="w"> </span><span class="o">--</span><span class="nv">query</span><span class="w"> </span><span class="s2">&quot;{name:name, partitionKey:resource.partitionKey.paths[0]}&quot;</span><span class="w"> </span><span class="o">--</span><span class="nv">output</span><span class="w"> </span><span class="nv">table</span>
+</code></pre></div>
+
+<p>Expected output:</p>
+<div class="codehilite"><pre><span></span><code>Name              PartitionKey
+----------------  -------------
+&lt;container-name&gt;  /id
+</code></pre></div>
+
+<h3 id="generate-and-run-the-python-import-script">Generate and run the Python import script</h3>
+<p>Use this prompt:</p>
+<div class="codehilite"><pre><span></span><code>Generate Python code to insert all JSON records from the `products.json` file into the `&lt;container-name&gt;` container in my Azure Cosmos DB database `&lt;database-name&gt;`. Use the azure-cosmos package. Use upsert_item for each record. Print progress every 50 items.
+</code></pre></div>
+
+<p>Agent mode:</p>
+<ol>
+<li>Creates a Python script (for example, <code>upload_data.py</code>).</li>
+<li>Installs the <code>azure-cosmos</code> package in your virtual environment.</li>
+<li>Runs the script.</li>
+</ol>
+<p>Review the generated code before allowing execution. The script should resemble:</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">azure.cosmos</span><span class="w"> </span><span class="kn">import</span> <span class="n">CosmosClient</span>
+
+<span class="c1"># Connection details (agent mode retrieves these from your Azure environment)</span>
+<span class="n">ENDPOINT</span> <span class="o">=</span> <span class="s2">&quot;https://&lt;cosmos-db-account-name&gt;.documents.azure.com:443/&quot;</span>
+<span class="n">KEY</span> <span class="o">=</span> <span class="s2">&quot;&lt;your-primary-key&gt;&quot;</span>
+<span class="n">DATABASE_NAME</span> <span class="o">=</span> <span class="s2">&quot;&lt;database-name&gt;&quot;</span>
+<span class="n">CONTAINER_NAME</span> <span class="o">=</span> <span class="s2">&quot;&lt;container-name&gt;&quot;</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">CosmosClient</span><span class="p">(</span><span class="n">ENDPOINT</span><span class="p">,</span> <span class="n">KEY</span><span class="p">)</span>
+<span class="n">database</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_database_client</span><span class="p">(</span><span class="n">DATABASE_NAME</span><span class="p">)</span>
+<span class="n">container</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">get_container_client</span><span class="p">(</span><span class="n">CONTAINER_NAME</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;products.json&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">products</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Uploading </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">products</span><span class="p">)</span><span class="si">}</span><span class="s2"> items...&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">products</span><span class="p">):</span>
+    <span class="n">container</span><span class="o">.</span><span class="n">upsert_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">50</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Uploaded </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">products</span><span class="p">)</span><span class="si">}</span><span class="s2"> items&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Upload complete: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">products</span><span class="p">)</span><span class="si">}</span><span class="s2"> items imported.&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p><strong>Verify</strong>: The script output shows all 295 items uploaded without errors:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">Uploading</span><span class="w"> </span><span class="mi">295</span><span class="w"> </span><span class="n">items</span><span class="o">...</span>
+<span class="w">  </span><span class="n">Uploaded</span><span class="w"> </span><span class="mi">50</span><span class="o">/</span><span class="mi">295</span><span class="w"> </span><span class="n">items</span>
+<span class="w">  </span><span class="n">Uploaded</span><span class="w"> </span><span class="mi">100</span><span class="o">/</span><span class="mi">295</span><span class="w"> </span><span class="n">items</span>
+<span class="w">  </span><span class="n">Uploaded</span><span class="w"> </span><span class="mi">150</span><span class="o">/</span><span class="mi">295</span><span class="w"> </span><span class="n">items</span>
+<span class="w">  </span><span class="n">Uploaded</span><span class="w"> </span><span class="mi">200</span><span class="o">/</span><span class="mi">295</span><span class="w"> </span><span class="n">items</span>
+<span class="w">  </span><span class="n">Uploaded</span><span class="w"> </span><span class="mi">250</span><span class="o">/</span><span class="mi">295</span><span class="w"> </span><span class="n">items</span>
+<span class="n">Upload</span><span class="w"> </span><span class="n">complete</span><span class="p">:</span><span class="w"> </span><span class="mi">295</span><span class="w"> </span><span class="n">items</span><span class="w"> </span><span class="n">imported</span><span class="o">.</span>
+</code></pre></div>
+
+<h2 id="verify-the-import">Verify the import</h2>
+<p>After the script runs, confirm the data exists in your container. Use this prompt:</p>
+<div class="codehilite"><pre><span></span><code>Query the first 5 items from the `&lt;container-name&gt;` container in my Cosmos DB database and show their names and prices.
+</code></pre></div>
+
+<p>Alternatively, add a verification script. Ask agent mode:</p>
+<div class="codehilite"><pre><span></span><code>Generate a Python script that queries the first 5 items from the `&lt;container-name&gt;` container and prints their id, name, and price fields.
+</code></pre></div>
+
+<p><strong>Verify</strong>: The output shows product data, for example:</p>
+<div class="codehilite"><pre><span></span><code>Query returned 5 items:
+  - LL Road Seat/Saddle (price: $27.12)
+  - Touring-1000 Blue, 50 (price: $2384.07)
+  - ML Road Pedal (price: $62.09)
+  - Mountain Bottle Cage (price: $9.99)
+  - HL Road Tire (price: $32.60)
+</code></pre></div>
+
+<p>You can also verify the total document count using the Azure CLI:</p>
+<div class="codehilite"><pre><span></span><code><span class="nv">az</span><span class="w"> </span><span class="nv">cosmosdb</span><span class="w"> </span><span class="nv">sql</span><span class="w"> </span><span class="nv">container</span><span class="w"> </span><span class="k">show</span><span class="w"> </span><span class="o">--</span><span class="nv">account</span><span class="o">-</span><span class="nv">name</span><span class="w"> </span><span class="o">&lt;</span><span class="nv">cosmos</span><span class="o">-</span><span class="nv">db</span><span class="o">-</span><span class="nv">account</span><span class="o">-</span><span class="nv">name</span><span class="o">&gt;</span><span class="w"> </span><span class="o">--</span><span class="nv">resource</span><span class="o">-</span><span class="nv">group</span><span class="w"> </span><span class="o">&lt;</span><span class="nv">resource</span><span class="o">-</span><span class="nv">group</span><span class="o">-</span><span class="nv">name</span><span class="o">&gt;</span><span class="w"> </span><span class="o">--</span><span class="nv">database</span><span class="o">-</span><span class="nv">name</span><span class="w"> </span><span class="o">&lt;</span><span class="nv">database</span><span class="o">-</span><span class="nv">name</span><span class="o">&gt;</span><span class="w"> </span><span class="o">--</span><span class="nv">name</span><span class="w"> </span><span class="o">&lt;</span><span class="nv">container</span><span class="o">-</span><span class="nv">name</span><span class="o">&gt;</span><span class="w"> </span><span class="o">--</span><span class="nv">query</span><span class="w"> </span><span class="s2">&quot;resource.statistics[0].documentCount&quot;</span><span class="w"> </span><span class="o">--</span><span class="nv">output</span><span class="w"> </span><span class="nv">tsv</span>
+</code></pre></div>
+
+<p>Expected output: <code>295</code></p>
+<h2 id="clean-up-resources">Clean up resources</h2>
+<p>When you're finished, delete the resource group to avoid ongoing charges.</p>
+<p>Use this prompt in agent mode:</p>
+<div class="codehilite"><pre><span></span><code>Use the Azure CLI to delete the resource group `&lt;resource-group-name&gt;` and all its resources without prompting for confirmation.
+</code></pre></div>
+
+<p>Or run the command directly in your terminal:</p>
+<div class="codehilite"><pre><span></span><code><span class="nv">az</span><span class="w"> </span><span class="nv">group</span><span class="w"> </span><span class="nv">delete</span><span class="w"> </span><span class="o">--</span><span class="nv">name</span><span class="w"> </span><span class="o">&lt;</span><span class="nv">resource</span><span class="o">-</span><span class="nv">group</span><span class="o">-</span><span class="nv">name</span><span class="o">&gt;</span><span class="w"> </span><span class="o">--</span><span class="nv">yes</span><span class="w"> </span><span class="o">--</span><span class="nv">no</span><span class="o">-</span><span class="k">wait</span>
+</code></pre></div>
+
+<p><strong>Verify</strong>: Confirm the resource group is being deleted:</p>
+<div class="codehilite"><pre><span></span><code><span class="nv">az</span><span class="w"> </span><span class="nv">group</span><span class="w"> </span><span class="k">show</span><span class="w"> </span><span class="o">--</span><span class="nv">name</span><span class="w"> </span><span class="o">&lt;</span><span class="nv">resource</span><span class="o">-</span><span class="nv">group</span><span class="o">-</span><span class="nv">name</span><span class="o">&gt;</span><span class="w"> </span><span class="o">--</span><span class="nv">query</span><span class="w"> </span><span class="s2">&quot;properties.provisioningState&quot;</span><span class="w"> </span><span class="o">--</span><span class="nv">output</span><span class="w"> </span><span class="nv">tsv</span><span class="w"> </span><span class="mi">2</span><span class="o">&gt;&amp;</span><span class="mi">1</span>
+</code></pre></div>
+
+<p>Expected output: <code>Deleting</code> or <code>(ResourceGroupNotFound) Resource group '&lt;resource-group-name&gt;' could not be found.</code></p>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Issue</th>
+<th>Cause</th>
+<th>Resolution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>az login</code> opens a browser but doesn't complete</td>
+<td>Browser-based authentication timeout</td>
+<td>Run <code>az login --use-device-code</code> for device code flow instead</td>
+</tr>
+<tr>
+<td>Cosmos DB account creation fails with naming error</td>
+<td>Account names must be globally unique, lowercase, 3-44 characters</td>
+<td>Choose a different name with a unique suffix (for example, your initials + date)</td>
+</tr>
+<tr>
+<td>Python script fails with <code>ModuleNotFoundError: No module named 'azure.cosmos'</code></td>
+<td>Package not installed in the active virtual environment</td>
+<td>Run <code>pip install azure-cosmos</code> in your activated <code>.venv</code></td>
+</tr>
+<tr>
+<td>Script fails with <code>CosmosHttpResponseError: (Unauthorized)</code></td>
+<td>Azure CLI credentials expired or wrong subscription selected</td>
+<td>Run <code>az login</code> again, then verify with <code>az account show</code></td>
+</tr>
+<tr>
+<td>Script fails with <code>partition key mismatch</code></td>
+<td>Container partition key doesn't match data field</td>
+<td>Ensure you created the container with <code>/id</code> as the partition key path</td>
+</tr>
+<tr>
+<td>Agent mode doesn't execute commands</td>
+<td>VS Code trust settings or agent mode permissions</td>
+<td>Select <strong>Always allow</strong> when prompted, or check VS Code workspace trust settings</td>
+</tr>
+<tr>
+<td><code>products.json</code> download returns HTML instead of JSON</td>
+<td>URL copied from GitHub web view (not raw content)</td>
+<td>Use the raw URL: <code>https://raw.githubusercontent.com/AzureCosmosDB/CosmicWorks/main/data/database-v4/product</code></td>
+</tr>
+<tr>
+<td>Script runs but uploads 0 items</td>
+<td>Empty or malformed <code>products.json</code></td>
+<td>Verify file content: <code>python -c "import json; print(len(json.load(open('products.json'))))"</code> should return <code>295</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="related-content">Related content</h2>
+<ul>
+<li><a href="get-started.md">Get started with GitHub Copilot for Azure</a></li>
+<li><a href="quickstart-deploy-app-agent-mode.md">Deploy an app with agent mode</a></li>
+<li><a href="/azure/cosmos-db/nosql/">Azure Cosmos DB for NoSQL documentation</a></li>
+<li><a href="/python/api/azure-cosmos/azure.cosmos">Azure Cosmos DB Python SDK reference</a></li>
+</ul></div></div></details>
+
+    <details class="gh-details"><summary>Recommendations · 9 items</summary><div class="details-content"><table class="cat-table"><tr><th>Category</th><th>Recommendation</th><th>Owner</th><th>Effort</th></tr><tr><td><span class="issue-badge medium" style="font-size:0.65rem">Doc Fix</span></td><td>No verification commands between resource creation steps | : Add `az cosmosdb show`, `az group show`, and `az cosmosdb sql container show` verification commands after each creation step with expected output.</td><td>Doc team</td><td>Medium</td></tr><tr><td><span class="issue-badge medium" style="font-size:0.65rem">Doc Fix</span></td><td>Download instruction is unnecessarily complex | : Provide a direct terminal download command as the primary method: `curl -o products.json &quot;https://raw.githubusercontent.com/AzureCosmosDB/CosmicWorks/main/data/database-v4/product&quot;`</td><td>Doc team</td><td>Medium</td></tr><tr><td><span class="issue-badge medium" style="font-size:0.65rem">Doc Fix</span></td><td>Verification step suggests CLI query that might not work | : Suggest generating a Python verification script instead, or document that the `cosmosdb-preview` extension is needed.</td><td>Doc team</td><td>Medium</td></tr><tr><td><span class="issue-badge medium" style="font-size:0.65rem">Doc Fix</span></td><td>No expected output shown for any agent mode interaction | : Add sample output snippets or success indicators after each prompt (for example, &quot;Agent mode runs the command and you see `provisioningState: Succeeded`&quot;).</td><td>Doc team</td><td>Medium</td></tr><tr><td><span class="issue-badge medium" style="font-size:0.65rem">Doc Fix</span></td><td>No time estimate for Cosmos DB account creation | : Add a note: &quot;This step takes 3–5 minutes to complete.&quot;</td><td>Doc team</td><td>Medium</td></tr><tr><td><span class="issue-badge minor" style="font-size:0.65rem">Doc Fix</span></td><td>Missing RBAC permissions in prerequisites | : Add &quot;Contributor role or higher on the subscription&quot; to prerequisites.</td><td>Doc team</td><td>Low</td></tr><tr><td><span class="issue-badge minor" style="font-size:0.65rem">Doc Fix</span></td><td>No cost warning | : Add a note about provisioned throughput costs and the importance of cleaning up.</td><td>Doc team</td><td>Low</td></tr><tr><td><span class="issue-badge minor" style="font-size:0.65rem">Doc Fix</span></td><td>&quot;Plan the work&quot; section mixes educational and actionable content | : Clarify this is a &quot;don't do this&quot; example with explicit framing.</td><td>Doc team</td><td>Low</td></tr><tr><td><span class="issue-badge minor" style="font-size:0.65rem">Doc Fix</span></td><td>Partition key `/id` is atypical for CosmicWorks data | : Consider using `/categoryId` or note that `/id` is used for simplicity in this quickstart.</td><td>Doc team</td><td>Low</td></tr></table></div></details>
+
+<details class="gh-details"><summary>Execution Logs</summary><div class="details-content"><details class="gh-details"><summary>Round 1: Original Documentation (134 lines)</summary><pre class="exec-log"><code>[2026-05-04 15:31:11] [INIT] Starting documentation review for: C:\Users\diberry\project-dina\repos\public-microsoftdocs-azure-dev-docs-pr\articles\github-copilot-azure\agent-mode-cosmosdb-import.md
+[2026-05-04 15:31:11] [INIT] Session directory: output\session-20260504-153111-agent-mode-cosmosdb-import-md-no-azure-skills
+[2026-05-04 15:31:11] [INIT] Model: claude-opus-4.6
+[2026-05-04 15:31:11] [INIT] Execution mode: multi-turn
+[2026-05-04 15:31:19] [INIT] Azure MCP servers attached to session (azure + foundry-mcp)
+[2026-05-04 15:31:20] [INIT] Using multi-turn mode (6 phases)
+[2026-05-04 15:31:20] [PHASE] Starting multi-turn review (6 phases)
+[2026-05-04 15:31:49] [PHASE] [PHASE 1/6] Starting: Fetch &amp; Analyze
+[2026-05-04 15:32:23] [PHASE] [PHASE 1/6] Captured 5 assistant message(s) for extraction
+
+# Phase 1: Fetch &amp; Analyze (extracted from response)
+[ANALYSIS] Goal: Use GitHub Copilot for Azure agent mode to create Azure Cosmos DB resources and import sample CosmicWorks product data using Python prompts in VS Code
+[ANALYSIS] Prerequisites: Azure subscription, VS Code with GitHub Copilot for Azure extension, Python 3.9+, Azure CLI, GitHub Copilot subscription with agent mode access, familiarity with get-started guide
+[ANALYSIS] Steps identified: 12
+[ANALYSIS] Step 1: Create a new local directory
+[ANALYSIS] Step 2: Open VS Code from that directory
+[ANALYSIS] Step 3: Open GitHub Copilot chat and switch to agent mode
+[ANALYSIS] Step 4: Download CosmicWorks products.json data file
+[ANALYSIS] Step 5: Create a Python virtual environment
+[ANALYSIS] Step 6: Sign in to Azure tenant and choose subscription
+[ANALYSIS] Step 7: Create a resource group in West US region
+[ANALYSIS] Step 8: Create an Azure Cosmos DB for NoSQL account
+[ANALYSIS] Step 9: Create a database in the Cosmos DB account
+[ANALYSIS] Step 10: Create a container with partition key /id
+[ANALYSIS] Step 11: Generate and run Python code to upload JSON items
+[ANALYSIS] Step 12: Verify the import by querying first 5 items
+[ANALYSIS] Success criteria: Product data from products.json is successfully imported into Azure Cosmos DB container and queryable via CLI
+[2026-05-04 15:32:23] [PHASE] Extracted 16 log entries from agent response for phase 1
+[2026-05-04 15:32:23] [PHASE] [PHASE 1/6] Complete ✓ (34s)
+[2026-05-04 15:32:23] [PHASE] [PHASE 2/6] Starting: Check Prerequisites
+[2026-05-04 15:33:33] [PHASE] [PHASE 2/6] Captured 10 assistant message(s) for extraction
+
+# Phase 2: Check Prerequisites (extracted from response)
+[PREREQ] Checking: Python 3.9 or later
+[PREREQ] ✓ Found: Python 3.13.13
+[PREREQ] Checking: Azure CLI
+[PREREQ] ✓ Found: azure-cli 2.84.0
+[PREREQ] Checking: Visual Studio Code
+[PREREQ] ✓ Found: VS Code 1.118.1
+[PREREQ] Checking: Azure subscription
+[PREREQ] ✓ Found: Active subscription (BAMI_DIBERRY_2, Enabled)
+[PREREQ] Checking: GitHub Copilot for Azure extension
+[PREREQ] ✗ Not found: ms-azuretools.vscode-azure-github-copilot not installed
+[PREREQ] Checking: GitHub Copilot subscription with agent mode access
+[PREREQ] ✗ Cannot verify: No CLI method to check Copilot subscription status
+[PREREQ] Checking: Familiarity with get-started guide
+[PREREQ] — Skipped: Knowledge prerequisite, not programmatically verifiable
+[BLOCKER] The entire tutorial requires interactive GitHub Copilot agent mode in VS Code GUI — user must type prompts, review generated code, and click UI buttons (Continue/Always allow). No CLI/API alternative exists for agent mode interaction. The extension is not installed and the workflow cannot be automated.
+[2026-05-04 15:33:33] [PHASE] Extracted 15 log entries from agent response for phase 2
+[2026-05-04 15:33:33] [PHASE] [PHASE 2/6] Complete ✓ (70s)
+[2026-05-04 15:33:33] [PHASE] [PHASE 3/6] Starting: Execute Steps
+[2026-05-04 15:41:02] [PHASE] [PHASE 3/6] Captured 33 assistant message(s) for extraction
+
+# Phase 3: Execute Steps (extracted from response)
+[STEP 1] Starting: Create a new directory on local computer
+[STEP 1] Command: New-Item -ItemType Directory -Path workspace -Force
+[STEP 1] ✓ Success: Directory created at workspace path
+[STEP 1] Verification: ✓ Directory exists
+[STEP 2] Starting: Open VS Code from that local directory
+[STEP 2] ⊘ Skipped: Environment restriction — requires interactive VS Code GUI launch; not executable in CLI agent
+[STEP 3] Starting: Open GitHub Copilot chat and switch to agent mode
+[STEP 3] ⊘ Skipped: Environment restriction — requires VS Code GUI interaction (Copilot chat panel, agent mode selection)
+[STEP 4] Starting: Download products data (products.json from CosmicWorks repo)
+[STEP 4] Command: Invoke-WebRequest -Uri &quot;https://raw.githubusercontent.com/AzureCosmosDB/CosmicWorks/main/data/database-v4/product&quot; -OutFile &quot;products.json&quot;
+[STEP 4] ✓ Success: Downloaded 171,366 bytes (295 JSON product items)
+[STEP 4] Verification: ✓ Valid JSON array with 295 items
+[STEP 4] Issue: Doc says navigate to GitHub page, click Download raw file icon, move file, rename to products.json — overly complex for a raw download. Direct URL would simplify.
+[STEP 5] Starting: Create a Python virtual environment
+[STEP 5] Command: python -m venv .venv &amp;&amp; .\.venv\Scripts\Activate.ps1
+[STEP 5] ✓ Success: venv created and activated (Python 3.13.13)
+[STEP 5] Verification: ✓ pip --version confirms venv path
+[STEP 6] Starting: Sign in to Azure tenant and choose subscription
+[STEP 6] Command: az account show
+[STEP 6] ✓ Success: Already signed in (subscription: BAMI_DIBERRY_2, Enabled)
+[STEP 6] Verification: ✓ Tenant and subscription confirmed
+[STEP 7] Starting: Create a resource group in West US region
+[STEP 7] Command: az group create --name rg-cosmosdb-import-test-20260504 --location westus
+[STEP 7] ✓ Success: Resource group created (provisioningState: Succeeded)
+[STEP 7] Verification: ✓ Resource group exists and is active
+[STEP 8] Starting: Create an Azure Cosmos DB for NoSQL account
+[STEP 8] Command: az cosmosdb create --name cosmos-import-test-20260504 --resource-group rg-cosmosdb-import-test-20260504 --kind GlobalDocumentDB --locations regionName=westus failoverPriority=0
+[STEP 8] ✓ Success: Cosmos DB account created (~3 min, provisioningState: Succeeded)
+[STEP 8] Verification: ✓ documentEndpoint accessible: https://cosmos-import-test-20260504.documents.azure.com:443/
+[STEP 9] Starting: Create a database in the Cosmos DB account
+[STEP 9] Command: az cosmosdb sql database create --account-name cosmos-import-test-20260504 --resource-group rg-cosmosdb-import-test-20260504 --name cosmicworks
+[STEP 9] ✓ Success: Database &quot;cosmicworks&quot; created
+[STEP 9] Verification: ✓ Database exists with correct name
+[STEP 10] Starting: Create a container with partition key /id
+[STEP 10] Command: az cosmosdb sql container create --account-name cosmos-import-test-20260504 --resource-group rg-cosmosdb-import-test-20260504 --database-name cosmicworks --name products --partition-key-path &quot;/id&quot;
+[STEP 10] ✓ Success: Container &quot;products&quot; created with partition key /id
+[STEP 10] Verification: ✓ Container exists with correct partition key configuration
+[STEP 11] Starting: Generate Python code to upload JSON items to the container
+[STEP 11] Command: pip install azure-cosmos azure-identity &amp;&amp; python upload_data.py
+[STEP 11] ✓ Success: 295 items uploaded (0 errors)
+[STEP 11] Verification: ✓ Upload complete with success_count=295, error_count=0
+[STEP 11] Issue: Doc says &quot;Agent mode creates the Python script and installs required dependencies&quot; — no sample code shown for what agent mode would generate. Reader has no reference to validate output.
+[STEP 12] Starting: Verify the import by querying first 5 items
+[STEP 12] Command: Python query: SELECT TOP 5 c.id, c.name, c.price FROM c
+[STEP 12] ✓ Success: 5 items returned with valid data
+[STEP 12] Verification: ✓ Container statistics show documentCount=295
+[STEP 12] Issue: Doc suggests using Azure CLI to query items, but `az cosmosdb sql query` is not available in standard CLI without extensions. The suggested prompt may not produce a working CLI command.
+[TOOL-ALT] Step 12: Used Python SDK query as alternative to CLI query (more reliable cross-version)
+[2026-05-04 15:41:02] [PHASE] Extracted 48 log entries from agent response for phase 3
+[2026-05-04 15:41:02] [PHASE] [PHASE 3/6] Complete ✓ (449s)
+[2026-05-04 15:41:02] [PHASE] [PHASE 4/6] Starting: Score Original
+[2026-05-04 15:42:36] [PHASE] [PHASE 4/6] Captured 12 assistant message(s) for extraction
+
+# Phase 4: Score Original (extracted from response)
+[SCORE] ════════════════════════════════════════════════
+[SCORE] ORIGINAL DOCUMENTATION SCORING
+[SCORE] ────────────────────────────────────────────────
+[SCORE] Category: Accuracy | Score: 14/20 | Notes: Underlying operations work, but download instructions are convoluted, verification CLI query may not work without extensions, /id partition key is atypical for CosmicWorks data
+[SCORE] Category: Agent-Friendly | Score: 9/20 | Notes: Steps are natural language prompts (non-deterministic), no expected outputs shown, no success criteria between steps, inherently requires VS Code GUI interaction
+[SCORE] Category: Completeness | Score: 11/15 | Notes: Core flow complete with cleanup, but missing cost/time estimates, RBAC permissions, intermediate verification guidance
+[SCORE] Category: Up-to-date | Score: 14/15 | Notes: All URLs valid, packages current, CLI syntax current; minor: no minimum CLI version specified
+[SCORE] Category: Clarity | Score: 7/10 | Notes: Good structure and voice, but download step is confusing, Plan section mixes educational/actionable content, no overall numbered sequence
+[SCORE] Category: Verifiability | Score: 3/10 | Notes: Only 2/12 steps have any verification (~17%); final verify step doesn't specify expected output format
+[SCORE] Category: Error Handling | Score: 5/10 | Notes: Has troubleshooting section with 3 common issues, but solutions are vague (&quot;agent mode installs them&quot;), no specific error messages or detailed resolution steps
+[SCORE] ────────────────────────────────────────────────
+[SCORE] ORIGINAL DOCUMENTATION SCORE: 63/100 (63%)
+[SCORE] ════════════════════════════════════════════════
+[2026-05-04 15:42:36] [PHASE] Extracted 13 log entries from agent response for phase 4
+[2026-05-04 15:42:36] [PHASE] [PHASE 4/6] Complete ✓ (95s)
+[2026-05-04 15:42:36] [PHASE] [PHASE 5/6] Starting: Rewrite
+[2026-05-04 15:43:58] [PHASE] [PHASE 5/6] Captured 13 assistant message(s) for extraction
+[2026-05-04 15:43:58] [PHASE] Extracted improved.md from agent response (15191 chars, phase 5)
+[2026-05-04 15:43:58] [PHASE] [PHASE 5/6] Complete ✓ (82s)
+[2026-05-04 15:43:58] [PHASE] [PHASE 8/6] Starting: Summarize
+[2026-05-04 15:45:15] [PHASE] [PHASE 8/6] Captured 14 assistant message(s) for extraction
+[2026-05-04 15:45:15] [PHASE] Extracted summary.md from agent response (7147 chars, phase 8)
+[2026-05-04 15:45:15] [PHASE] [PHASE 8/6] Complete ✓ (76s)
+[2026-05-04 15:45:15] [PHASE] Multi-turn complete: 6/6 phases validated
+[2026-05-04 15:45:17] [INIT] Session finished with status: completed
+[2026-05-04 15:45:17] [INIT] Saved session-tools.json</code></pre></details></div></details>
+
+<footer>
+  doc-agent · Session: session-20260504-153111-agent-mode-cosmosdb-import-md-no-azure-skills<br>
+  <a href="C:\Users\diberry\project-dina\repos\public-microsoftdocs-azure-dev-docs-pr\articles\github-copilot-azure\agent-mode-cosmosdb-import.md" target="_blank">View original doc</a>
+   · <a href="summary.md">summary.md</a> · <a href="original-execution.log">execution log</a> · <a href="improved.md">improved.md</a>
+</footer>
+
+</body>
+</html>

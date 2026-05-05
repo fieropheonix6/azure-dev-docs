@@ -1,0 +1,217 @@
+{
+  "url": "C:\\Users\\diberry\\project-dina\\repos\\public-microsoftdocs-azure-dev-docs-pr\\articles\\github-copilot-azure\\agent-mode-cosmosdb-import.md",
+  "timestamp": "2026-05-04 15:45",
+  "scores": {
+    "accuracy": 14,
+    "agent_friendly": 9,
+    "completeness": 11,
+    "up_to_date": 14,
+    "clarity": 7,
+    "verifiability": 3,
+    "error_handling": 5
+  },
+  "total_score": 63,
+  "improved_score": 89,
+  "findings_by_severity": {
+    "critical": {
+      "label": "Critical",
+      "description": "Blocks task completion",
+      "count": 0
+    },
+    "medium": {
+      "label": "Medium",
+      "description": "Impacts user success rate",
+      "count": 5
+    },
+    "minor": {
+      "label": "Minor",
+      "description": "Polish/clarity improvements",
+      "count": 4
+    }
+  },
+  "top_issues": [
+    {
+      "severity": "medium",
+      "title": "No verification commands between resource creation steps",
+      "fix": ": Add `az cosmosdb show`, `az group show`, and `az cosmosdb sql container show` verification commands after each creation step with expected output."
+    },
+    {
+      "severity": "medium",
+      "title": "Download instruction is unnecessarily complex",
+      "fix": ": Provide a direct terminal download command as the primary method: `curl -o products.json \"https://raw.githubusercontent.com/AzureCosmosDB/CosmicWorks/main/data/database-v4/product\"`"
+    },
+    {
+      "severity": "medium",
+      "title": "Verification step suggests CLI query that might not work",
+      "fix": ": Suggest generating a Python verification script instead, or document that the `cosmosdb-preview` extension is needed."
+    },
+    {
+      "severity": "medium",
+      "title": "No expected output shown for any agent mode interaction",
+      "fix": ": Add sample output snippets or success indicators after each prompt (for example, \"Agent mode runs the command and you see `provisioningState: Succeeded`\")."
+    },
+    {
+      "severity": "medium",
+      "title": "No time estimate for Cosmos DB account creation",
+      "fix": ": Add a note: \"This step takes 3–5 minutes to complete.\""
+    },
+    {
+      "severity": "minor",
+      "title": "Missing RBAC permissions in prerequisites",
+      "fix": ": Add \"Contributor role or higher on the subscription\" to prerequisites."
+    },
+    {
+      "severity": "minor",
+      "title": "No cost warning",
+      "fix": ": Add a note about provisioned throughput costs and the importance of cleaning up."
+    },
+    {
+      "severity": "minor",
+      "title": "\"Plan the work\" section mixes educational and actionable content",
+      "fix": ": Clarify this is a \"don't do this\" example with explicit framing."
+    },
+    {
+      "severity": "minor",
+      "title": "Partition key `/id` is atypical for CosmicWorks data",
+      "fix": ": Consider using `/categoryId` or note that `/id` is used for simplicity in this quickstart."
+    }
+  ],
+  "whats_working": [
+    "Clear prompt decomposition strategy — The \"Plan the work\" section provides excellent guidance on breaking large tasks into atomic prompts, which is a genuine best practice for agent mode.",
+    "Correct Azure CLI commands — All underlying CLI operations (resource group, Cosmos DB account, database, container creation) use valid, current syntax that executes without modification.",
+    "Valid data source — The CosmicWorks GitHub URL is active and returns 295 well-structured JSON product items with proper `id` fields.",
+    "Complete lifecycle coverage — The doc covers setup through cleanup, ensuring readers don't leave orphaned Azure resources.",
+    "Multi-shell tab support — Python venv instructions cover PowerShell, Git Bash, and macOS/Linux in a tabbed format, accommodating different development environments."
+  ],
+  "product_recommendations": [],
+  "tool_usage": {
+    "file_ops": 3,
+    "shell": 32,
+    "other": 6
+  },
+  "execution_time_seconds": 846.0,
+  "steps": [
+    {
+      "name": "Create a new directory on local computer",
+      "status": "pass",
+      "duration_seconds": null
+    },
+    {
+      "name": "Open VS Code from that local directory",
+      "status": "skip",
+      "duration_seconds": null
+    },
+    {
+      "name": "Open GitHub Copilot chat and switch to agent mode",
+      "status": "skip",
+      "duration_seconds": null
+    },
+    {
+      "name": "Download products data (products.json from CosmicWorks repo)",
+      "status": "pass",
+      "duration_seconds": null
+    },
+    {
+      "name": "Create a Python virtual environment",
+      "status": "pass",
+      "duration_seconds": null
+    },
+    {
+      "name": "Sign in to Azure tenant and choose subscription",
+      "status": "pass",
+      "duration_seconds": null
+    },
+    {
+      "name": "Create a resource group in West US region",
+      "status": "pass",
+      "duration_seconds": null
+    },
+    {
+      "name": "Create an Azure Cosmos DB for NoSQL account",
+      "status": "pass",
+      "duration_seconds": null
+    },
+    {
+      "name": "Create a database in the Cosmos DB account",
+      "status": "pass",
+      "duration_seconds": null
+    },
+    {
+      "name": "Create a container with partition key /id",
+      "status": "pass",
+      "duration_seconds": null
+    },
+    {
+      "name": "Generate Python code to upload JSON items to the container",
+      "status": "pass",
+      "duration_seconds": null
+    },
+    {
+      "name": "Verify the import by querying first 5 items",
+      "status": "pass",
+      "duration_seconds": null
+    }
+  ],
+  "verification_steps": [
+    {
+      "step": "Download data",
+      "current": "\"Make sure to rename the file to products.json\"",
+      "priority": "❌",
+      "recommended": "`python -c \"import json; print(len(json.load(open('products.json'))))\"` → `295`"
+    },
+    {
+      "step": "Create venv",
+      "current": "(no verification)",
+      "priority": "❌",
+      "recommended": "`python --version` from activated venv shows Python 3.9+"
+    },
+    {
+      "step": "Sign in to Azure",
+      "current": "\"Which tenant and subscription am I working with?\"",
+      "priority": "✅ Partial",
+      "recommended": "`az account show --query name -o tsv` → your subscription name"
+    },
+    {
+      "step": "Create resource group",
+      "current": "(no verification)",
+      "priority": "❌",
+      "recommended": "`az group show --name <rg> --query properties.provisioningState -o tsv` → `Succeeded`"
+    },
+    {
+      "step": "Create Cosmos DB account",
+      "current": "(no verification)",
+      "priority": "❌",
+      "recommended": "`az cosmosdb show --name <acct> -g <rg> --query provisioningState -o tsv` → `Succeeded`"
+    },
+    {
+      "step": "Create database",
+      "current": "(no verification)",
+      "priority": "❌",
+      "recommended": "`az cosmosdb sql database show --account-name <acct> -g <rg> -n <db> --query name -o tsv`"
+    },
+    {
+      "step": "Create container",
+      "current": "(no verification)",
+      "priority": "❌",
+      "recommended": "`az cosmosdb sql container show ... --query resource.partitionKey.paths[0] -o tsv` → `/id`"
+    },
+    {
+      "step": "Upload data",
+      "current": "(no verification)",
+      "priority": "❌",
+      "recommended": "Script output: `Upload complete: 295 items imported.`"
+    },
+    {
+      "step": "Verify import",
+      "current": "\"query the first 5 items\" (prompt only)",
+      "priority": "✅ Partial",
+      "recommended": "Python query returning 5 items with name/price fields"
+    },
+    {
+      "step": "Clean up",
+      "current": "(no verification)",
+      "priority": "❌",
+      "recommended": "`az group show --name <rg>` → `ResourceGroupNotFound` error"
+    }
+  ]
+}

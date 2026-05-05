@@ -2,7 +2,7 @@
 title: Azure skill for AI Runway AKS setup
 description: Walks through setting up AI Runway on an existing AKS cluster, from cluster verification to first model deployment.
 ms.topic: reference
-ms.date: 06/10/2026
+ms.date: 05/05/2026
 author: diberry
 ms.author: diberry
 ms.service: azure-mcp-server
@@ -47,7 +47,7 @@ An inference provider is the runtime component that serves your AI model on the 
 | Provider | Best for | Description |
 |----------|----------|-------------|
 | **KAITO** | Managed GPU inference | Kubernetes AI Toolchain Operator — automates model deployment with built-in GPU node provisioning |
-| **Dynamo** | High-throughput serving | NVIDIA's inference framework optimized for multi-GPU, multi-node deployments |
+| **Dynamo** | High-throughput serving | Inference framework optimized for multi-GPU, multi-node deployments |
 | **KubeRay** | Ray-based workloads | Kubernetes operator for Ray clusters — ideal for distributed inference and training |
 
 ## Suggested workflow
@@ -63,6 +63,18 @@ The skill follows a sequential six-step process:
 
 > [!NOTE]
 > GPU node pools incur significant compute charges. An A100-80GB node pool can cost $3–5+ per hour. Confirm cost implications before provisioning GPU resources.
+
+## Troubleshooting
+
+| Error / Symptom | Likely cause | Remediation |
+|-----------------|--------------|-------------|
+| No kubeconfig context | Not connected to a cluster | Run `az aks get-credentials` or equivalent |
+| Controller in CrashLoopBackOff | Config or RBAC issue | Check logs: `kubectl logs -n airunway-system -l control-plane=controller-manager --previous` |
+| Provider not ready | Image pull or RBAC issue | Check pod logs: `kubectl logs <pod-name> -n <namespace>` |
+| ModelDeployment stuck in Pending | GPU scheduling failure or provider not ready | Inspect events: `kubectl describe modeldeployment <name> -n <namespace>` |
+| `bfloat16` errors at inference | T4 or V100 lacks bfloat16 support | Add `--dtype float16` to serving args |
+
+For detailed troubleshooting and rollback procedures, see the [Azure Diagnostics skill](/azure/developer/azure-skills/skills/azure-diagnostics).
 
 ## Example prompts
 
