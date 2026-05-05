@@ -15,9 +15,14 @@ Provisions Microsoft Entra Agent Identity Blueprints, BlueprintPrincipals, and p
 
 **Skill:** `entra-agent-id` | [Source code](https://github.com/microsoft/skills/blob/main/.github/skills/entra-agent-id/SKILL.md)
 
+> [!IMPORTANT]
+> **Preview API** — All Agent Identity endpoints are under Microsoft Graph `/beta` only. They are not available in `/v1.0`. Verify API parameters match current preview behavior before production use.
+
 ## What it provides
 
 This skill provides GitHub Copilot with specialized knowledge for creating and managing OAuth 2.0-capable identities for AI agents using Microsoft Graph. Every agent instance gets a distinct identity, audit trail, and independently scoped permission grants. The skill covers the Agent Identity object model (Blueprint → BlueprintPrincipal → Agent Identity), runtime token exchange flows, and the Microsoft Entra SDK for AgentID sidecar.
+
+For the latest Agent ID documentation, use the [microsoft-docs skill](https://github.com/microsoft/skills/blob/main/.github/skills/microsoft-docs/SKILL.md) which queries the [Microsoft Learn MCP Server](https://learn.microsoft.com/api/mcp) for current API parameters and behavior.
 
 ## Prerequisites
 
@@ -25,6 +30,7 @@ This skill provides GitHub Copilot with specialized knowledge for creating and m
 - **AI assistant with Azure Skills**: [GitHub Copilot for Azure](/azure/developer/github-copilot-azure/get-started), Visual Studio Code with [Azure MCP extension](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azure-mcp-server), Claude Code, or another [compatible MCP client](../install.md).
 - **Microsoft Entra role**: Agent Identity Developer, Agent Identity Administrator, or Application Administrator.
 - **Microsoft Graph access**: PowerShell (`Microsoft.Graph.Applications`) or Python (`azure-identity`, `requests`).
+- **OData-Version header**: Include `OData-Version: 4.0` on every Graph request to Agent Identity endpoints.
 
 ## When to use this skill
 
@@ -50,14 +56,33 @@ Use this skill when you need to:
 The skill follows a core provisioning workflow:
 
 1. **Create Agent Identity Blueprint**: Define the agent type/class as an application object.
-1. **Create BlueprintPrincipal**: Explicitly create the service principal (not auto-created).
-1. **Create Agent Identities**: Provision per-instance identities under the Blueprint.
+1. **Create BlueprintPrincipal**: Explicitly create the service principal. This step is mandatory — creating a Blueprint does NOT auto-create its service principal. Without this step, Agent Identity creation fails with `400: The Agent Blueprint Principal for the Agent Blueprint does not exist.`
+1. **Create Agent Identities**: Provision per-instance identities under the Blueprint. Sponsors are required and must be User objects — ServicePrincipals and Groups are rejected.
 1. **Configure credentials**: Set up authentication on the Blueprint (Workload Identity Federation for production, client secret for dev).
 1. **Grant permissions**: Assign application or delegated permissions per Agent Identity.
 1. **Configure runtime exchange**: Implement the two-step `fmi_path` token exchange for autonomous or OBO flows.
 
 > [!IMPORTANT]
-> `DefaultAzureCredential` is not supported for Agent Identity APIs. Azure CLI tokens carry `Directory.AccessAsUser.All`, which Agent Identity APIs reject with 403. Use a dedicated app registration with `client_credentials`, or `Connect-MgGraph` with explicit delegated scopes.
+> `DefaultAzureCredential` is not supported for Agent Identity APIs. Azure CLI tokens carry `Directory.AccessAsUser.All`, which Agent Identity APIs reject with 403. You MUST use a dedicated app registration with `client_credentials` flow, or connect via `Connect-MgGraph` with explicit delegated scopes.
+
+## Required permissions
+
+Agent Identity APIs use 18 specific Microsoft Graph application permissions. Discover them with:
+
+```azurecli
+az ad sp show --id 00000003-0000-0000-c000-000000000000 \
+  --query "appRoles[?contains(value, 'AgentIdentity')].{id:id, value:value}" -o json
+```
+
+Key permissions include:
+
+| Permission | Purpose |
+|-----------|---------|
+| `Application.ReadWrite.All` | Blueprint CRUD (application objects) |
+| `AgentIdentityBlueprint.Create` | Create new Blueprints |
+| `AgentIdentityBlueprint.ReadWrite.All` | Manage Blueprint lifecycle |
+| `AgentIdentity.Create` | Create per-instance identities |
+| `AgentIdentity.ReadWrite.All` | Manage Agent Identity lifecycle |
 
 ## Example prompts
 
@@ -79,3 +104,6 @@ Try these prompts to activate this skill:
 - [Microsoft Entra SDK for AgentID](/entra/msidweb/agent-id-sdk/overview)
 - [Azure Model Context Protocol (MCP) Server overview](/azure/developer/azure-mcp-server/overview)
 - [Skill source code](https://github.com/microsoft/skills/blob/main/.github/skills/entra-agent-id/SKILL.md)
+
+> [!NOTE]
+> The [skill source](https://github.com/microsoft/skills/blob/main/.github/skills/entra-agent-id/SKILL.md) is an AI instruction file that tells GitHub Copilot when and how to use this capability. For official developer documentation, see the [Microsoft Entra Agent ID AI-guided setup](/entra/agent-id/identity-platform/agent-id-ai-guided-setup).
